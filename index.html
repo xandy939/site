@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>By TR Alojamentos | Oficial</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* Ajustes base para o rodapé colar sempre ao fundo */
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            min-height: 100vh !important;
+            display: flex !important;
+            flex-direction: column !important;
+            background-color: #f2f6fa !important;
+        }
+
+        /* Ocupa a página toda de forma limpa */
+        .hero-title, main {
+            max-width: 100% !important;
+            width: 100% !important;
+            padding: 20px 4% !important;
+            box-sizing: border-box;
+        }
+
+        .hero-title {
+            padding-top: 50px !important;
+            text-align: left !important;
+        }
+
+        .hero-title h1 {
+            font-size: 38px !important;
+            color: #1a365d !important;
+            font-weight: 800 !important;
+            margin-bottom: 10px !important;
+            letter-spacing: -0.5px;
+        }
+
+        .hero-title p {
+            font-size: 18px !important;
+            color: #4a5568 !important;
+            margin: 0 !important;
+        }
+
+        /* Grelha que coloca os cartões lado a lado */
+        .grid-apartamentos {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)) !important;
+            gap: 30px !important;
+            width: 100% !important;
+            margin-top: 20px !important;
+        }
+
+        .card {
+            background: #ffffff !important;
+            border-radius: 16px !important;
+            overflow: hidden !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            border: 1px solid #e2e8f0 !important;
+        }
+
+        .card-img-container {
+            position: relative !important;
+            height: 320px !important;
+            width: 100% !important;
+            overflow: hidden !important;
+            background-color: #111;
+        }
+
+        .card-slide {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            opacity: 0 !important;
+            transition: opacity 0.8s ease-in-out !important;
+            z-index: 1;
+        }
+
+        .card-slide.active {
+            opacity: 1 !important;
+            z-index: 2;
+        }
+
+        .badge-praia {
+            position: absolute !important;
+            top: 18px !important;
+            left: 18px !important;
+            background: #ffffff !important;
+            color: #1a365d !important;
+            padding: 7px 14px !important;
+            border-radius: 8px !important;
+            font-size: 13px !important;
+            font-weight: 700 !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+            z-index: 10 !important;
+        }
+
+        .card-conteudo {
+            padding: 28px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 12px !important;
+            flex-grow: 1;
+        }
+
+        .local {
+            font-size: 13px !important;
+            color: #0073e6 !important;
+            text-transform: uppercase !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.8px !important;
+            display: inline-block;
+        }
+
+        .card-conteudo h3 {
+            color: #1a365d !important;
+            font-size: 24px !important;
+            font-weight: 800 !important;
+            margin: 0 0 4px 0 !important;
+            letter-spacing: -0.3px;
+        }
+
+        /* Grid de comodidades */
+        .detalhes-grid-index {
+            display: grid !important;
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 10px !important;
+            list-style: none !important;
+            padding: 0 !important;
+            margin: 5px 0 20px 0 !important;
+        }
+
+        .detalhes-grid-index li {
+            background: #f8fafc !important;
+            border: 1px solid #edf2f7 !important;
+            padding: 12px 16px !important;
+            border-radius: 10px !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            color: #334155 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .detalhes-grid-index li:hover {
+            background: #f1f5f9 !important;
+            transform: translateY(-2px);
+        }
+
+        .detalhes-grid-index .icone-wrapper {
+            font-size: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Rodapé do cartão */
+        .preco-footer {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            margin-top: auto !important;
+            padding-top: 20px !important;
+            border-top: 1px solid #edf2f7 !important;
+        }
+
+        .status-tag {
+            font-size: 15px !important;
+            font-weight: 700 !important;
+            padding: 6px 14px !important;
+            border-radius: 20px !important;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-tag.style-disponivel { background: #e6f4ea !important; color: #137333 !important; }
+        .status-tag.style-brevemente { background: #fce8e6 !important; color: #c5221f !important; }
+
+        .btn-ver-mais {
+            background: #1a365d !important;
+            color: #ffffff !important;
+            padding: 12px 26px !important;
+            border-radius: 10px !important;
+            text-decoration: none !important;
+            font-weight: 700 !important;
+            font-size: 15px !important;
+            transition: background 0.2s ease-in-out !important;
+            box-shadow: 0 4px 12px rgba(26, 54, 93, 0.15) !important;
+        }
+
+        .btn-ver-mais:hover { background: #0f233f !important; }
+
+        /* Rodapé Geral */
+        .footer-alojamentos-geral {
+            background-color: #002255 !important;
+            color: #ffffff !important;
+            padding: 45px 20px !important;
+            text-align: center !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+            font-size: 14.5px !important;
+            line-height: 1.8 !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            margin-top: auto !important;
+            display: block !important;
+            clear: both !important;
+        }
+
+        .footer-restrito { max-width: 1200px !important; margin: 0 auto !important; }
+        .footer-titulo-ok { font-weight: 700 !important; margin-bottom: 8px !important; letter-spacing: 0.3px; }
+        .footer-texto-ok { opacity: 0.9 !important; margin-bottom: 8px !important; font-size: 14px !important; }
+        .footer-contacto-ok { margin-bottom: 16px !important; font-size: 14px !important; }
+        .footer-contacto-ok a { color: #ffffff !important; text-decoration: underline !important; font-weight: 600 !important; }
+        .footer-copy-ok {
+            font-size: 13px !important; opacity: 0.6 !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+            padding-top: 16px !important; display: inline-block !important; width: 100%; max-width: 400px;
+        }
+
+        /* --- ESTILOS DO MENU DE PERFIL DO UTILIZADOR --- */
+        .perfil-container {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .user-name {
+            font-weight: 700;
+            font-size: 14px;
+            color: #1a365d;
+            background: #e6f0fa;
+            padding: 8px 16px;
+            border-radius: 100px;
+            display: inline-flex;
+            align-items: center;
+        }
+        .btn-logout {
+            background: #fce8e6;
+            color: #c5221f;
+            border: 1px solid #f8cbc7;
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 13.5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover {
+            background: #c5221f;
+            color: white;
+        }
+
+        @media (max-width: 900px) {
+            .grid-apartamentos { grid-template-columns: 1fr !important; }
+            .card-img-container { height: 260px !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">By TR <span>Alojamentos</span></div>
+        <div id="auth-area">
+            <a href="login.html" style="text-decoration: none; color: #334155; font-weight: 600; font-size: 14px; padding: 10px 20px; border-radius: 100px; border: 1px solid #e2e8f0; background: #ffffff;">Login</a>
+        </div>
+    </header>
+
+    <div class="hero-title">
+        <h1>Descubra o Algarve Connosco</h1>
+        <p>Alojamentos exclusivos na melhor localização de Portimão</p>
+    </div>
+
+    <main>
+        <div class="grid-apartamentos">
+            
+            <div class="card">
+                <div class="card-img-container">
+                    <div class="badge-praia">🏖️ 300m da Praia</div>
+                    <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/664384502.jpg?k=acfd681463efe7d67e77e3f69bff858c863cd120f13f9cf1f756dc146fe1d5e4&o=" alt="Piscina" class="card-slide active">
+                    <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/87666305.jpg?k=cfac75c617c54342386963f8d490e120454538ea99436f73d9e6f67cbd13253f&o=" alt="Paradise Apartment" class="card-slide">
+                </div>
+                
+                <div class="card-conteudo">
+                    <span class="local">Portimão • Praia da Rocha</span>
+                    <h3>By TR - Litoral Mar</h3>
+                    <ul class="detalhes-grid-index">
+                        <li><span class="icone-wrapper">🚗</span> Estacionamento Privado</li>
+                        <li><span class="icone-wrapper">🌅</span> Vistas & Varanda</li>
+                        <li><span class="icone-wrapper">🌐</span> Acesso Wi-Fi Gratuito</li>
+                        <li><span class="icone-wrapper">🍳</span> Comodidades de Cozinha</li>
+                        <li><span class="icone-wrapper">🏊</span> Piscina Exterior</li>
+                    </ul>
+                    
+                    <div class="preco-footer">
+                        <span class="status-tag style-disponivel">Disponivel</span>
+                        <a href="apartamento-rocha.html" class="btn-ver-mais">Ver Detalhes</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-img-container">
+                    <div class="badge-praia">🏖️ 300m da Praia</div>
+                    <img src="paraisodosolbanner.png" alt="Clube Amarilis Piscinas" class="card-slide active">
+                    <img src="paraisodosol1.jpg" alt="Clube Amarilis Interior" class="card-slide">
+                </div>
+                
+                <div class="card-conteudo">
+                    <span class="local">Portimão • Praia da Rocha</span>
+                    <h3>By TR - Paraíso do Sol </h3>
+                    
+                    <ul class="detalhes-grid-index">
+                        <li><span class="icone-wrapper">🏊</span> 3 Piscinas (Inclui Interior)</li>
+                        <li><span class="icone-wrapper">🅿️</span> Estacionamento Gratuito</li>
+                        <li><span class="icone-wrapper">🌐</span> Acesso Wi-Fi Gratuito</li>
+                        <li><span class="icone-wrapper">🍳</span> Excecional Pequeno-Almoço</li>
+                        <li><span class="icone-wrapper">💪</span> Centro de Fitness</li>
+                        <li><span class="icone-wrapper">🌹</span> Varanda com Vista</li>
+                    </ul>
+                    
+                    <div class="preco-footer">
+                        <span class="status-tag style-brevemente">Brevemente</span>
+                        <a href="apartamento-amarilis.html" class="btn-ver-mais">Ver Detalhes</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="footer-alojamentos-geral">
+        <div class="footer-restrito">
+            <p class="footer-titulo-ok">Apartamentos Turísticos | Algarve by Tr</p>
+            <p class="footer-texto-ok">Rua dos Três Castelos, N.3 – Paraíso do Sol | Rua dos Três Castelos – Edifício Litoral Mar, Portimão, Portugal</p>
+            <p class="footer-contacto-ok">
+                Email: <a href="mailto:apt.turisticos.algarve@tudopararegistar.pt">apt.turisticos.algarve@tudopararegistar.pt</a> | 
+                Telefone: <a href="tel:+351218200221">+351 218 200 221</a>
+            </p>
+            <p class="footer-copy-ok">© 2026 Apartamentos Turísticos Algarve by Tr. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-auth.js"></script> 
+    <script src="script.js"></script>
+</body>
+</html>

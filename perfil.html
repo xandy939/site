@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>By TR Alojamentos | O Meu Perfil</title>
+    <style>
+        :root {
+            --primary: #1a365d;
+            --brand-blue: #0073e6;
+            --bg: #f2f6fa;
+            --white: #ffffff;
+            --text-main: #334155;
+            --text-muted: #64748b;
+        }
+
+        body {
+            margin: 0; padding: 0; min-height: 100vh;
+            background-color: var(--bg);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--text-main);
+            display: flex; flex-direction: column;
+        }
+
+        header {
+            background-color: var(--white);
+            display: flex; justify-content: space-between;
+            align-items: center; padding: 20px 5%;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .logo { font-size: 22px; font-weight: 850; color: var(--primary); text-decoration: none; }
+        .logo span { color: var(--brand-blue); font-weight: 500; }
+
+        .btn-voltar {
+            text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 13.5px;
+            padding: 10px 22px; border-radius: 100px; border: 1px solid #e2e8f0;
+            background-color: var(--white); transition: all 0.2s;
+        }
+        .btn-voltar:hover { background-color: #f1f5f9; color: var(--brand-blue); }
+
+        .container-perfil {
+            flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px 20px;
+        }
+
+        .caixa-perfil {
+            background: var(--white); width: 100%; max-width: 500px;
+            padding: 40px; border-radius: 20px; border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            text-align: center;
+        }
+
+        .avatar-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .avatar-grande {
+            width: 110px; height: 110px;
+            border-radius: 50%; object-fit: cover;
+            border: 3px solid var(--brand-blue);
+            background: #e6f0fa;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 45px; color: var(--primary);
+        }
+
+        .btn-mudar-foto {
+            position: absolute; bottom: 0; right: 0;
+            background: var(--brand-blue); color: white;
+            border: none; border-radius: 50%; width: 32px; height: 32px;
+            font-size: 16px; cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .btn-mudar-foto:hover { background: #005cb8; }
+
+        .caixa-perfil h2 { margin: 0 0 5px 0; color: var(--primary); font-size: 26px; font-weight: 800; }
+        .caixa-perfil .role { font-size: 13px; color: var(--brand-blue); font-weight: 700; text-transform: uppercase; margin-bottom: 25px; letter-spacing: 0.5px; }
+
+        .info-grid { text-align: left; background: #f8fafc; padding: 20px; border-radius: 14px; border: 1px solid #edf2f7; margin-bottom: 25px; }
+        .info-linha { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #edf2f7; font-size: 14.5px; }
+        .info-linha:last-child { border-bottom: none; }
+        .info-label { font-weight: 700; color: var(--text-main); }
+        .info-valor { color: var(--text-muted); text-align: right; }
+
+        .botoes-acoes {
+            display: flex; flex-direction: column; gap: 10px;
+        }
+
+        .btn-password {
+            width: 100%; background: #f0f7ff; color: var(--brand-blue); border: 1px solid #cce3ff;
+            padding: 14px; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-password:hover { background: var(--brand-blue); color: white; }
+
+        .btn-logout-pag {
+            width: 100%; background: #fce8e6; color: #c5221f; border: 1px solid #f8cbc7;
+            padding: 14px; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-logout-pag:hover { background: #c5221f; color: white; }
+        
+        #input-foto { display: none; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo">By TR <span>Alojamentos</span></a>
+        <a href="index.html" class="btn-voltar">← Voltar ao Início</a>
+    </header>
+
+    <div class="container-perfil">
+        <div class="caixa-perfil">
+            
+            <div class="avatar-container">
+                <img id="perf-foto-img" class="avatar-grande" src="" alt="👤" style="display:none;">
+                <div id="perf-foto-placeholder" class="avatar-grande">👤</div>
+                <label for="input-foto" class="btn-mudar-foto" title="Mudar foto de perfil">📷</label>
+                <input type="file" id="input-foto" accept="image/*">
+            </div>
+
+            <h2 id="perf-nome">A carregar...</h2>
+            <div class="role">Cliente Verificado</div>
+
+            <div class="info-grid">
+                <div class="info-linha">
+                    <span class="info-label">Nome de Utilizador:</span>
+                    <span class="info-valor" id="perf-username">...</span>
+                </div>
+                <div class="info-linha">
+                    <span class="info-label">Género / Sexo:</span>
+                    <span class="info-valor" id="perf-genero">Não especificado</span>
+                </div>
+                <div class="info-linha">
+                    <span class="info-label">Telemóvel / Contacto:</span>
+                    <span class="info-valor" id="perf-telefone">Não registado</span>
+                </div>
+                <div class="info-linha">
+                    <span class="info-label">Endereço de Email:</span>
+                    <span class="info-valor" id="perf-email">...</span>
+                </div>
+                <div class="info-linha">
+                    <span class="info-label">ID da Conta:</span>
+                    <span class="info-valor" id="perf-id" style="font-size: 11px; font-family: monospace;">...</span>
+                </div>
+                <div class="info-linha">
+                    <span class="info-label">Membro Desde:</span>
+                    <span class="info-valor" id="perf-data">...</span>
+                </div>
+            </div>
+
+            <div class="botoes-acoes">
+                <button id="btn-alterar-senha" class="btn-password">🔒 Alterar Password</button>
+                <button id="btn-logout-perfil" class="btn-logout-pag">Terminar Sessão</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+</body>
+</html>
