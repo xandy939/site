@@ -28,12 +28,21 @@
         const btn          = form.querySelector("button[type=submit]");
         const msg          = document.getElementById("msg-reserva");
 
-        // ---- 1. Buscar preço do apartamento + disponibilidade -------------
-        const [aptInfo, blockedNights] = await Promise.all([
+        // ---- 1. Buscar preço, épocas e disponibilidade --------------------
+        const [aptInfo, blockedNights, seasons] = await Promise.all([
             loadApartment(sb, apartmentId),
             loadBlockedNights(sb, apartmentId),
+            loadSeasons(sb, apartmentId),
         ]);
-        const pricePerNight = aptInfo?.price_per_night_cents ?? 0;
+        const basePrice = aptInfo?.price_per_night_cents ?? 0;
+        // Função: dado um Date, devolve o preço em cêntimos para essa noite
+        const priceFor = (date) => {
+            const iso = isoDate(date);
+            for (const s of seasons) {
+                if (iso >= s.start_date && iso <= s.end_date) return s.price_per_night_cents;
+            }
+            return basePrice;
+        };
 
         // Apartamento inactivo (ex: Paraíso do Sol) — bloqueia o submit
         if (aptInfo && aptInfo.active === false) {
@@ -76,7 +85,11 @@
                 return false;
             },
             setup: (picker) => {
-                picker.on("selected", () => atualizarPrecoVisual(picker, pricePerNight));
+                picker.on("selected", () => atualizarPrecoVisual(picker, priceFor));
+                picker.on("show", () => {
+                    decorarDiasComPreco(blockedNights, priceFor);
+                    iniciarObservadorPrecos(blockedNights, priceFor);
+                });
             },
         });
 
@@ -87,11 +100,14 @@
             try {
                 const { data: profile } = await sb
                     .from("profiles")
-                    .select("nome, telefone")
+                    .select("first_name, last_name, phone")
                     .eq("id", session.user.id)
                     .single();
-                if (profile?.nome)     inputNome.value = profile.nome;
-                if (profile?.telefone) inputTel.value  = profile.telefone;
+                if (profile) {
+                    const fullName = [profile.first_name, profile.last_name].filter(Boolean).join(' ');
+                    if (fullName)        inputNome.value = fullName;
+                    if (profile.phone)   inputTel.value  = profile.phone;
+                }
             } catch (_) { /* sem profile, ignora */ }
         }
 
@@ -169,28 +185,79 @@
         }
     });
 
+    // ---- Etiqueta de preço em cada dia do calendário -----------------------
+
+    let observador = null;
+    function iniciarObservadorPrecos(blockedNights, priceFor) {
+        if (observador) return;
+        const picker = document.querySelector(".litepicker");
+        if (!picker) return;
+        observador = new MutationObserver(() => {
+            decorarDiasComPreco(blockedNights, priceFor);
+        });
+        observador.observe(picker, { childList: true, subtree: true });
+    }
+
+    function decorarDiasComPreco(blockedNights, priceFor) {
+        setTimeout(() => {
+            document.querySelectorAll(".litepicker .day-item").forEach(el => {
+                if (el.querySelector(".price-tag")) return;
+                if (el.classList.contains("is-locked"))  return;
+                if (el.classList.contains("is-empty"))   return;
+                if (el.classList.contains("is-disabled"))return;
+
+                const ts = parseInt(el.dataset.time, 10);
+                if (!ts) return;
+                const d = new Date(ts);
+                if (d < new Date(new Date().toDateString())) return;
+
+                const key = isoDate(d);
+                if (blockedNights.has(key)) return;
+
+                const cents = priceFor(d);
+                if (!cents) return;
+                const tag = document.createElement("span");
+                tag.className = "price-tag";
+                tag.textContent = "€" + Math.round(cents / 100);
+                el.appendChild(tag);
+            });
+        }, 0);
+    }
+
     // ---- Preço dinâmico ----------------------------------------------------
 
-    function atualizarPrecoVisual(picker, pricePerNight) {
+    function atualizarPrecoVisual(picker, priceFor) {
         const el = document.getElementById("preco-total");
         if (!el) return;
         const s = picker.getStartDate();
         const e = picker.getEndDate();
         if (!s || !e) { el.style.display = "none"; return; }
-        const nights = Math.round((e.toJSDate() - s.toJSDate()) / 86400000);
+
+        // Iterar pelas noites e somar com o preço de cada uma
+        const breakdown = {};            // { "€110": 3, "€135": 2 } — para agrupar
+        let totalCents = 0;
+        let nights = 0;
+        const cursor = new Date(s.toJSDate());
+        const end    = new Date(e.toJSDate());
+        while (cursor < end) {
+            const c = priceFor(cursor);
+            totalCents += c;
+            nights++;
+            const key = "€" + Math.round(c / 100);
+            breakdown[key] = (breakdown[key] || 0) + 1;
+            cursor.setDate(cursor.getDate() + 1);
+        }
         if (nights < 1) { el.style.display = "none"; return; }
-        const total = (pricePerNight * nights) / 100;
-        const noite = (pricePerNight / 100).toFixed(2);
+
+        // Construir linhas agrupadas (ex: "€110 × 2 noites", "€135 × 1 noite")
+        const linhas = Object.entries(breakdown).map(([preco, n]) =>
+            `<div class="line"><span>${preco} × ${n} noite${n>1?'s':''}</span><span>€${(parseInt(preco.slice(1))*n).toFixed(2)}</span></div>`
+        ).join("");
+
         el.style.display = "block";
         el.innerHTML = `
-            <div style="display:flex; justify-content:space-between; font-size:13.5px; color:#475569;">
-                <span>€ ${noite} × ${nights} noite(s)</span>
-                <span>€ ${total.toFixed(2)}</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-top:8px; padding-top:8px; border-top:1px solid #e2e8f0; font-weight:800; color:#1a365d; font-size:16px;">
-                <span>Total</span>
-                <span>€ ${total.toFixed(2)}</span>
-            </div>
+            ${linhas}
+            <div class="total"><span>Total</span><span>€${(totalCents/100).toFixed(2)}</span></div>
         `;
     }
 
@@ -203,6 +270,19 @@
             .eq("id", apartmentId)
             .single();
         return data;
+    }
+
+    async function loadSeasons(sb, apartmentId) {
+        const { data, error } = await sb
+            .from("pricing_seasons")
+            .select("name, start_date, end_date, price_per_night_cents")
+            .eq("apartment_id", apartmentId)
+            .order("start_date", { ascending: true });
+        if (error) {
+            console.warn("Falha a carregar épocas:", error.message);
+            return [];
+        }
+        return data || [];
     }
 
     async function loadBlockedNights(sb, apartmentId) {

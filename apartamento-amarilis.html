@@ -3,156 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>By TR | Charme Paraíso Sol Praia da Rocha</title>
+    <title>By TR · Paraíso do Sol · Apartamento em Praia da Rocha</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="style.css">
-    
-    <style>
-        html, body {
-            margin: 0 !important;
-            padding: 0 !important;
-            min-height: 100vh !important;
-            display: flex !important;
-            flex-direction: column !important;
-            background-color: #fcfcfd !important;
-            background: #fcfcfd !important;
-        }
-
-        .container-detalhes {
-            flex: 1 0 auto;
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        .status-indisponivel {
-            color: #e53e3e !important;
-            font-weight: bold;
-            font-size: 20px;
-            margin-top: 5px;
-            margin-bottom: 10px;
-        }
-
-        .caixa-reserva .label-estado {
-            font-size: 12px;
-            text-transform: uppercase;
-            color: #718096;
-            letter-spacing: 0.5px;
-        }
-
-        .mapa-exterior-bloco {
-            width: 100% !important;
-            max-width: 1200px !important;
-            margin: 60px auto 90px auto !important;
-            padding: 0 20px !important;
-            box-sizing: border-box !important;
-            clear: both !important;
-        }
-
-        .mapa-caixa-branca {
-            background: #ffffff !important;
-            border-radius: 16px !important;
-            padding: 30px !important;
-            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05) !important;
-            border: 1px solid #eef2f6 !important;
-        }
-
-        .mapa-caixa-branca h3 {
-            font-size: 20px !important;
-            color: #1e293b !important;
-            margin: 0 0 5px 0 !important;
-            font-weight: 700 !important;
-        }
-
-        .footer-alojamentos-geral {
-            background-color: #002255 !important;
-            color: #ffffff !important;
-            padding: 45px 20px !important;
-            text-align: center !important;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-            font-size: 14.5px !important;
-            line-height: 1.8 !important;
-            width: 100% !important;
-            box-sizing: border-box !important;
-            margin-top: auto !important;
-            display: block !important;
-            clear: both !important;
-        }
-
-        .footer-restrito {
-            max-width: 1200px !important;
-            margin: 0 auto !important;
-        }
-
-        .footer-titulo-ok { font-weight: 700 !important; margin-bottom: 8px !important; letter-spacing: 0.3px; }
-        .footer-texto-ok { opacity: 0.9 !important; margin-bottom: 8px !important; font-size: 14px !important; }
-        .footer-contacto-ok { margin-bottom: 16px !important; font-size: 14px !important; }
-        .footer-contacto-ok a { color: #ffffff !important; text-decoration: underline !important; font-weight: 600 !important; }
-        .footer-copy-ok {
-            font-size: 13px !important; opacity: 0.6 !important;
-            border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
-            padding-top: 16px !important; display: inline-block !important; width: 100%; max-width: 400px;
-        }
-
-        /* ============ FORMULÁRIO DE RESERVA ============ */
-        .form-reserva { display: flex; flex-direction: column; gap: 12px; margin: 16px 0; }
-        .form-reserva .campo-reserva { display: flex; flex-direction: column; gap: 4px; }
-        .form-reserva label {
-            font-size: 11px; font-weight: 700; color: #475569;
-            text-transform: uppercase; letter-spacing: 0.5px;
-        }
-        .form-reserva input,
-        .form-reserva select {
-            width: 100%; padding: 11px 12px; font-size: 14px; color: #1a365d;
-            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;
-            outline: none; transition: all 0.2s; box-sizing: border-box;
-        }
-        .form-reserva input:focus,
-        .form-reserva select:focus {
-            background: #fff; border-color: #0073e6;
-            box-shadow: 0 0 0 3px rgba(0, 115, 230, 0.1);
-        }
-        .form-reserva input[readonly] { cursor: pointer; background: #f1f5f9; }
-        .form-reserva.disabled { opacity: 0.5; pointer-events: none; }
-        .btn-reservar {
-            background: #0073e6; color: #fff; border: none;
-            padding: 13px; border-radius: 10px; font-weight: 700; font-size: 15px;
-            cursor: pointer; transition: all 0.2s; margin-top: 4px;
-        }
-        .btn-reservar:hover:not(:disabled) { background: #005cb8; transform: translateY(-1px); }
-        .btn-reservar:disabled { background: #94a3b8; cursor: not-allowed; }
-        .msg-reserva {
-            font-size: 13px; padding: 10px; border-radius: 8px;
-            display: none; line-height: 1.4;
-        }
-        .msg-reserva.show { display: block; }
-        .msg-reserva.ok    { background: #e6f4ea; color: #137333; border: 1px solid #b8e0c5; }
-        .msg-reserva.erro  { background: #fce8e6; color: #c5221f; border: 1px solid #f8cbc7; }
-        .msg-reserva.aviso { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
-        .litepicker { font-family: inherit !important; }
-        .litepicker .container__months { box-shadow: 0 10px 30px rgba(0,0,0,0.12) !important; }
-    </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">By TR <span>Alojamentos</span></div>
-        <nav><a href="index.html" class="btn-voltar">← Voltar à Lista</a></nav>
-    </header>
+<header class="site-header">
+    <div class="site-header__inner">
+        <a href="index.html" class="brand">
+            By TR<small>Alojamentos · Algarve</small>
+        </a>
+        <a href="index.html" class="btn btn-ghost btn-sm">← Voltar à lista</a>
+    </div>
+</header>
 
-    <main class="container-detalhes">
-        
-        <div class="header-detalhes">
-            <h2>Apartamento By TR - Charme Paraíso Sol</h2>
-            <div class="resumo-lin">
-                <span>📍 Praia da Rocha, Portimão</span> • 
-                <span>🛏️ 1 Quarto (2 Camas)</span> • 
-                <span>🚿 1 Banho</span>
-            </div>
+<main class="section-tight">
+    <div class="container">
+
+        <div style="margin-bottom: var(--s-5);">
+            <span class="eyebrow">Portimão · Praia da Rocha</span>
+            <h1 class="h-1" style="margin-top: var(--s-2);">Paraíso do Sol</h1>
+            <p class="body" style="margin-top: var(--s-2); color: var(--muted);">
+                1 quarto · 2 camas · 1 casa de banho · até 4 hóspedes
+            </p>
         </div>
 
-        <section class="carrossel-detalhes">
+        <section class="detail-gallery">
             <div class="contador-fotos" id="fotoContador">1/26</div>
             <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/103232811.jpg?k=218f97f25fb6e27bec878bd1d4a4d17d5e7328d5c5eff8e089e54051ff9558ef&o=" class="slide active">
             <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/419454149.jpg?k=32a1e2736bf2e03bb8b352265c128ffb319f488199e2ecd7402274269b743366&o=" class="slide">
@@ -180,54 +59,56 @@
             <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/146376470.jpg?k=393aec1e5f3fb8a774cd33e1629edd7f05786574c065f79fd884597b3ff539bf&o=" class="slide">
             <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/146373845.jpg?k=2342c7f79741832d366d8c2eaa33b8558ad951c4da464308ae0e776cf8d79934&o=" class="slide">
             <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/100287017.jpg?k=7158999d87abf8b8adf611f01814bfb7e658b37294901ff66a9e2ed6508a7e1d&o=" class="slide">
-            
-            <button class="seta anterior" onclick="mudarSlide(-1)">❮</button>
-            <button class="seta seguinte" onclick="mudarSlide(1)">❯</button>
+            <button class="seta anterior" onclick="mudarSlide(-1)" aria-label="Anterior">❮</button>
+            <button class="seta seguinte" onclick="mudarSlide(1)" aria-label="Seguinte">❯</button>
         </section>
 
-        <div class="seccao-info">
-            <div class="lado-esquerdo">
-                
-                <div class="bloco-conteudo">
+        <div class="detail-layout">
+            <div>
+                <div class="detail-block">
                     <h3>Principais comodidades</h3>
-                    <div class="grid-comodidades">
-                        <div class="item-comodidade"><strong>🏊 3 piscinas</strong><span>Acesso livre às piscinas do complexo</span></div>
-                        <div class="item-comodidade"><strong>🅿️ Estacionamento gratuito</strong><span>Lugar disponível para os hóspedes</span></div>
-                        <div class="item-comodidade"><strong>🌐 Acesso Wi-Fi gratuito</strong><span>Internet estável incluída no alojamento</span></div>
-                        <div class="item-comodidade"><strong>🚌 Transfer (aeroporto)</strong><span>Disponível mediante marcação</span></div>
-                        <div class="item-comodidade"><strong>♿ Mobilidade condicionada</strong><span>Comodidades preparadas para acessibilidade</span></div>
-                        <div class="item-comodidade"><strong>🌳 Jardim & 🍹 Bar</strong><span>Zonas de lazer e convívio no complexo</span></div>
+                    <div class="detail-amenities">
+                        <div class="amenity-item"><strong>3 piscinas</strong><span>Inclui piscina interior aquecida</span></div>
+                        <div class="amenity-item"><strong>Estacionamento gratuito</strong><span>Lugar privado disponível</span></div>
+                        <div class="amenity-item"><strong>Wi-Fi gratuito</strong><span>Internet estável incluída</span></div>
+                        <div class="amenity-item"><strong>Transfer aeroporto</strong><span>Disponível mediante marcação</span></div>
+                        <div class="amenity-item"><strong>Mobilidade condicionada</strong><span>Comodidades acessíveis</span></div>
+                        <div class="amenity-item"><strong>Jardim e bar</strong><span>Zonas de lazer no complexo</span></div>
                     </div>
                 </div>
 
-                <div class="bloco-conteudo">
-                    <h3>Nas Proximidades</h3>
-                    <div class="grid-comodidades">
-                        <div class="item-comodidade"><strong>🏖️ Praia da Rocha</strong><span>A cerca de 350 metros a pé</span></div>
-                        <div class="item-comodidade"><strong>🛒 Serviços & Lojas</strong><span>Supermercados e comércio a curta distância</span></div>
-                        <div class="item-comodidade"><strong>🍔 Restauração</strong><span>Restaurantes e cafés muito próximos</span></div>
+                <div class="detail-block">
+                    <h3>Nas proximidades</h3>
+                    <div class="detail-amenities">
+                        <div class="amenity-item"><strong>Praia da Rocha</strong><span>350m a pé</span></div>
+                        <div class="amenity-item"><strong>Serviços e lojas</strong><span>Supermercados a curta distância</span></div>
+                        <div class="amenity-item"><strong>Restauração</strong><span>Restaurantes e cafés ao lado</span></div>
                     </div>
                 </div>
 
-                <div class="bloco-conteudo">
+                <div class="detail-block">
                     <h3>Descrição</h3>
-                    <p style="color: #4a5568; margin-top: 10px;">O Paradise Apartment oferece a combinação perfeita de conforto e localização privilegiada no complexo Charme Paraíso Sol, na Praia da Rocha. Totalmente equipado e com excelentes áreas de lazer, é o espaço ideal para desfrutar do melhor que Portimão tem para oferecer.</p>
+                    <p class="detail-prose">
+                        O Paraíso do Sol oferece a combinação perfeita de conforto e localização privilegiada no complexo Charme Paraíso Sol, na Praia da Rocha. Totalmente equipado, com excelentes áreas de lazer e três piscinas (incluindo uma interior), é o espaço ideal para desfrutar do melhor que Portimão tem para oferecer em qualquer estação do ano. O complexo conta ainda com bar, jardim e serviço de pequeno-almoço excepcional.
+                    </p>
                 </div>
             </div>
 
-            <div class="lado-direito">
-                <div class="caixa-reserva" data-apartment-id="paraiso-do-sol">
-                    <span class="label-estado">Estado</span>
-                    <h3 class="status-indisponivel">Indisponível</h3>
+            <aside>
+                <div class="booking-card" data-apartment-id="paraiso-do-sol">
+                    <div class="booking-card__price">
+                        <span class="amount">€95</span>
+                        <span class="per">/ noite</span>
+                    </div>
 
-                    <form id="form-reserva" class="form-reserva" novalidate>
-                        <div class="campo-reserva">
-                            <label for="datas-reserva">Datas pretendidas</label>
+                    <form id="form-reserva" novalidate>
+                        <div class="field">
+                            <label for="datas-reserva">Datas</label>
                             <input type="text" id="datas-reserva" name="datas"
                                    placeholder="Check-in → Check-out" readonly required>
                         </div>
 
-                        <div class="campo-reserva">
+                        <div class="field">
                             <label for="hospedes">Hóspedes</label>
                             <select id="hospedes" name="hospedes" required>
                                 <option value="1">1 hóspede</option>
@@ -237,89 +118,106 @@
                             </select>
                         </div>
 
-                        <div class="campo-reserva">
+                        <div class="field">
                             <label for="nome-hospede">Nome completo</label>
                             <input type="text" id="nome-hospede" name="nome"
                                    placeholder="Ex: João Silva" required>
                         </div>
 
-                        <div class="campo-reserva">
+                        <div class="field">
                             <label for="email-hospede">Email</label>
                             <input type="email" id="email-hospede" name="email"
                                    placeholder="exemplo@email.com" required>
                         </div>
 
-                        <div class="campo-reserva">
+                        <div class="field">
                             <label for="tel-hospede">Telefone</label>
                             <input type="tel" id="tel-hospede" name="telefone"
                                    placeholder="+351 9xx xxx xxx">
                         </div>
 
-                        <div id="preco-total" style="display:none; padding:12px 14px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px;"></div>
+                        <div id="preco-total" style="display:none;" class="price-summary"></div>
 
-                        <button type="submit" class="btn-reservar">Reservar e Pagar</button>
-                        <div style="font-size:11px; color:#94a3b8; text-align:center; margin-top:-4px;">
-                            🔒 Pagamento seguro · Cartão, Multibanco e MB WAY
+                        <button type="submit" class="btn btn-primary btn-block btn-lg">Reservar e Pagar</button>
+                        <div class="payment-methods">
+                            🔒 Pagamento seguro via <strong style="color: var(--navy);">Viva Wallet</strong><br>
+                            <span style="color:var(--muted); font-size:10px;">Cartão · MB WAY · Multibanco · Apple Pay · Google Pay</span>
                         </div>
-                        <div id="msg-reserva" class="msg-reserva"></div>
+                        <div id="msg-reserva" class="alert" style="margin-top: var(--s-3);"></div>
                     </form>
                 </div>
-            </div>
-        </div>
-    </main>
-
-    <div class="mapa-exterior-bloco">
-        <div class="mapa-caixa-branca">
-            <h3>Localização Exata</h3>
-            <p style="margin-bottom: 20px; font-size: 14px; color: #64748b;">📍 Rua Três Castelos N.3, 8500-801 Portimão, Portugal</p>
-            <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3181.0773837920786!2d-8.5471415!3d37.1158652!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd1b28e5e7c5fdc5%3A0xed7face10811eac8!2sHarmony%20Apartments%20Litoral%20Mar!5e0!3m2!1spt-PT!2spt!4v1716132000000!5m2!1spt-PT!2spt0" 
-                width="100%" 
-                height="450" 
-                style="border:0; border-radius: 12px;" 
-                allowfullscreen="" 
-                loading="lazy" 
-                referrerpolicy="no-referrer-when-downgrade">
-            </iframe>
+            </aside>
         </div>
     </div>
+</main>
 
-    <footer class="footer-alojamentos-geral">
-        <div class="footer-restrito">
-            <p class="footer-titulo-ok">Charme Paraíso Sol - Apartamentos Turísticos | Algarve by Tr</p>
-            <p class="footer-texto-ok">Rua Três Castelos N.3, 8500-801 Portimão, Portugal</p>
-            <p class="footer-contacto-ok">
-                Email: <a href="mailto:apt.turisticos.algarve@tudopararegistar.pt">apt.turisticos.algarve@tudopararegistar.pt</a> | 
-                Telefone: <a href="tel:+351218200221">+351 218 200 221</a>
-            </p>
-            <p class="footer-copy-ok">© 2026 Apartamentos Turísticos Algarve by Tr. Todos os direitos reservados.</p>
+<section id="hospedes-recentes" class="section-tight" style="display:none;">
+    <div class="container">
+        <div class="recent-guests" style="border-top: none; padding-top: 0; margin-top: 0;">
+            <span class="eyebrow">Quem cá esteve</span>
+            <h3 style="margin-top: var(--s-2);">Hóspedes recentes</h3>
+            <p class="sub">Pessoas reais que escolheram o Paraíso do Sol para a sua estadia.</p>
+            <div class="guests-grid"></div>
         </div>
-    </footer>
+    </div>
+</section>
 
-    <script>
-        let slideIndex = 0;
-        function atualizarContador() {
-            const slides = document.querySelectorAll('.slide');
-            const contador = document.getElementById('fotoContador');
-            if (slides.length > 0) {
-                contador.textContent = `${slideIndex + 1}/${slides.length}`;
-            }
-        }
-        function mudarSlide(direcao) {
-            const slides = document.querySelectorAll('.slide');
-            if (slides.length === 0) return;
-            slides[slideIndex].classList.remove('active');
-            slideIndex += direcao;
-            if (slideIndex >= slides.length) slideIndex = 0;
-            if (slideIndex < 0) slideIndex = slides.length - 1;
-            slides[slideIndex].classList.add('active');
-            atualizarContador();
-        }
-        document.addEventListener("DOMContentLoaded", atualizarContador);
-    </script>
+<section class="section-tight">
+    <div class="container">
+        <div class="map-block">
+            <h3>Localização</h3>
+            <p class="caption" style="margin-bottom: var(--s-3);">Rua Três Castelos N.3 · 8500-801 Portimão, Portugal</p>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3181.0773837920786!2d-8.5471415!3d37.1158652!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd1b28e5e7c5fdc5%3A0xed7face10811eac8!2sHarmony%20Apartments%20Litoral%20Mar!5e0!3m2!1spt-PT!2spt!4v1716132000000!5m2!1spt-PT!2spt"
+                    allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+    </div>
+</section>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
-    <script src="reservations.js"></script>
+<footer class="site-footer">
+    <div class="container">
+        <div class="footer-col">
+            <h4>By TR Alojamentos</h4>
+            <p>Apartamentos turísticos em Praia da Rocha, Portimão. Estadias premium na melhor localização do Algarve.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Contacto</h4>
+            <p>
+                <a href="mailto:apt.turisticos.algarve@tudopararegistar.pt">apt.turisticos.algarve@tudopararegistar.pt</a><br>
+                <a href="tel:+351218200221">+351 218 200 221</a>
+            </p>
+        </div>
+        <div class="footer-col">
+            <h4>Localização</h4>
+            <p>Rua Três Castelos N.3<br>8500-801 Portimão, Portugal</p>
+        </div>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-copy">© 2026 By TR Alojamentos · Todos os direitos reservados</div>
+</footer>
+
+<script>
+    let slideIndex = 0;
+    function atualizarContador() {
+        const slides = document.querySelectorAll('.slide');
+        const contador = document.getElementById('fotoContador');
+        if (slides.length > 0 && contador) contador.textContent = `${slideIndex + 1}/${slides.length}`;
+    }
+    function mudarSlide(direcao) {
+        const slides = document.querySelectorAll('.slide');
+        if (slides.length === 0) return;
+        slides[slideIndex].classList.remove('active');
+        slideIndex += direcao;
+        if (slideIndex >= slides.length) slideIndex = 0;
+        if (slideIndex < 0) slideIndex = slides.length - 1;
+        slides[slideIndex].classList.add('active');
+        atualizarContador();
+    }
+    document.addEventListener('DOMContentLoaded', atualizarContador);
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
+<script src="reservations.js"></script>
+<script src="recent-guests.js"></script>
 </body>
 </html>

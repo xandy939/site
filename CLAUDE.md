@@ -67,13 +67,15 @@ Edge Functions ([supabase/functions/](supabase/functions/)):
 
 **Edge Functions deploy quirk:** Supabase's `POST /v1/projects/{ref}/functions` (JSON body) silently truncates the first 4 bytes of every uploaded function. **Use the multipart `/functions/deploy?slug=X` endpoint** (in [tools/deploy-functions.mjs](tools/deploy-functions.mjs)) which is what the official CLI uses. Don't switch back to the JSON endpoint without understanding the truncation; functions deployed via it boot-error.
 
-### Database schema vs. what the code queries — `profiles` table disagrees
+### Profiles table — schema and the JS-vs-DB-name confusion
 
-[supabase-setup.sql](supabase-setup.sql) (the original profile-setup file) defines `profiles` with columns `first_name, last_name, phone, age, gender` and installs a trigger that copies `raw_user_meta_data` into those columns on user creation.
+[supabase-setup.sql](supabase-setup.sql) defines `profiles(id, first_name, last_name, phone, age, gender)` and installs `handle_new_user` (an `auth.users` AFTER INSERT trigger) that copies `raw_user_meta_data->>'first_name'` etc. into the row. Those column names are still authoritative — the live DB matches this SQL exactly. An `avatar_url` column was added by us on 2026-05-27 (no migration file — applied via Management API; if you need a clean rebuild add it to the SQL).
 
-`script.js`, however, queries `select('nome, telefone, avatar_url, genero, sexo')` and upserts `avatar_url`. The live database has clearly drifted from that SQL file — at minimum `nome`, `telefone`, `avatar_url`, and at least one of `genero`/`sexo` exist in production, plus the `avatars` storage bucket. **Treat `supabase-setup.sql` as historical, not authoritative** for the profiles table. Use the Supabase MCP server (configured in `.vscode/mcp.json`) to inspect the real schema before adding columns or writing migrations.
+Earlier copies of [script.js](script.js) and [reservations.js](reservations.js) queried Portuguese names (`nome`, `telefone`, `genero`/`sexo`) which were silently failing because those columns never existed. That was a pre-existing bug, not schema drift. Both files were fixed to use the real column names (`first_name`, `last_name`, `phone`, `gender`, `avatar_url`).
 
-The newer [supabase/migrations/20260525_reservations.sql](supabase/migrations/20260525_reservations.sql) IS authoritative for the reservation tables.
+If you need to write JS that touches profiles, the **canonical column set** is: `id, first_name, last_name, phone, age, gender, avatar_url, created_at`. For registration: `auth.signUp({ options: { data: { first_name, last_name, phone, age, gender } } })` — the trigger handles the rest.
+
+The newer [supabase/migrations/20260525_reservations.sql](supabase/migrations/20260525_reservations.sql) and [20260525_payments.sql](supabase/migrations/20260525_payments.sql) are authoritative for the reservation tables.
 
 ### Styling
 

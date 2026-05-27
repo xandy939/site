@@ -43,14 +43,24 @@ async function syncOne(sb: any, apartmentId: string, url: string) {
     const text = await resp.text();
     const events = parseIcs(text);
 
-    let inserted = 0, updated = 0, cancelled = 0, conflicts = 0;
-    const seenUids: string[] = [];
+    let inserted = 0, conflicts = 0, errors = 0;
+    const validEvents = events.filter(ev => ev.uid && ev.start && ev.end);
+    const errorList: any[] = [];
 
-    for (const ev of events) {
-        if (!ev.uid || !ev.start || !ev.end) continue;
-        seenUids.push(ev.uid);
+    // Estratégia: full sync.
+    // 1. Apagar todas as reservas 'booking' antigas deste apartamento
+    // 2. Inserir frescas todas as que vêm no feed
+    // Isto evita problemas com upsert e índices parciais.
+    const { error: delErr } = await sb
+        .from("reservations")
+        .delete()
+        .eq("apartment_id", apartmentId)
+        .eq("source", "booking");
+    if (delErr) {
+        return { events: events.length, upserts: 0, errors: 1, errorList: [delErr.message] };
+    }
 
-        // Tenta inserir; se já existe (constraint do índice único), faz update
+    for (const ev of validEvents) {
         const row = {
             apartment_id: apartmentId,
             external_uid: ev.uid,
@@ -64,44 +74,25 @@ async function syncOne(sb: any, apartmentId: string, url: string) {
             user_id: null,
         };
 
-        const { error: insErr } = await sb
-            .from("reservations")
-            .upsert(row, { onConflict: "apartment_id,external_uid" });
+        const { error: insErr } = await sb.from("reservations").insert(row);
 
         if (insErr) {
             if (insErr.code === "23P01") {
-                // Excludes overlap — significa que uma reserva confirmada do site
-                // colide com esta do Booking. Marca o evento como conflito.
                 conflicts++;
                 console.warn(`Conflito iCal: ${apartmentId} ${ev.start}..${ev.end} (uid=${ev.uid})`);
+            } else if (insErr.code === "23505") {
+                // duplicado dentro do próprio feed (raro mas possível) — ignora
             } else {
-                console.error("upsert erro:", insErr);
+                errors++;
+                errorList.push({ uid: ev.uid, error: insErr.message, code: insErr.code });
+                console.error("insert erro:", insErr);
             }
         } else {
-            inserted++;  // upsert não distingue, mas o contador serve
+            inserted++;
         }
     }
 
-    // Cancelar reservas 'booking' que já não vêm no feed (foram apagadas no Booking)
-    if (seenUids.length > 0) {
-        const { data: stale } = await sb
-            .from("reservations")
-            .select("id")
-            .eq("apartment_id", apartmentId)
-            .eq("source", "booking")
-            .eq("status", "confirmed")
-            .not("external_uid", "in", `(${seenUids.map(u => `"${u.replaceAll('"', '""')}"`).join(",")})`);
-
-        if (stale && stale.length > 0) {
-            const ids = stale.map((s: any) => s.id);
-            await sb.from("reservations")
-                .update({ status: "cancelled" })
-                .in("id", ids);
-            cancelled = ids.length;
-        }
-    }
-
-    return { events: events.length, upserts: inserted, cancelled, conflicts };
+    return { events: events.length, valid: validEvents.length, upserts: inserted, conflicts, errors, errorList };
 }
 
 // ---- Parser iCal mínimo (suporta o que o Booking produz) -------------------

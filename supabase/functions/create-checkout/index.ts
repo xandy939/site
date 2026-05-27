@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
         Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    // 1. Carrega o apartamento e o preço
+    // 1. Carrega o apartamento e o preço-base
     const { data: apt, error: aptErr } = await sb
         .from("apartments")
         .select("id, name, price_per_night_cents, active")
@@ -70,7 +70,31 @@ Deno.serve(async (req) => {
 
     const nights = nightsBetween(body.check_in, body.check_out);
     if (nights < 1) return json({ error: "Datas inválidas" }, 400);
-    const totalCents = apt.price_per_night_cents * nights;
+
+    // 1b. Carrega épocas de preço deste apartamento
+    const { data: seasons } = await sb
+        .from("pricing_seasons")
+        .select("start_date, end_date, price_per_night_cents")
+        .eq("apartment_id", body.apartment_id);
+    const seasonList = seasons || [];
+
+    function priceForDate(iso: string): number {
+        for (const s of seasonList) {
+            if (iso >= s.start_date && iso <= s.end_date) return s.price_per_night_cents;
+        }
+        return apt.price_per_night_cents!;
+    }
+
+    // Soma o preço de cada noite no intervalo [check_in, check_out)
+    let totalCents = 0;
+    const cursor = new Date(body.check_in + "T00:00:00Z");
+    const end    = new Date(body.check_out + "T00:00:00Z");
+    while (cursor < end) {
+        totalCents += priceForDate(cursor.toISOString().slice(0, 10));
+        cursor.setUTCDate(cursor.getUTCDate() + 1);
+    }
+    if (totalCents <= 0) return json({ error: "Total inválido" }, 500);
+    const avgPerNight = Math.round(totalCents / nights);
 
     // 2. Cria a reserva 'awaiting_payment' (constraint impede sobreposição)
     const { data: reservation, error: insErr } = await sb
@@ -113,7 +137,7 @@ Deno.serve(async (req) => {
     params.append("success_url", `${baseUrl}/reserva-confirmada.html?session_id={CHECKOUT_SESSION_ID}`);
     params.append("cancel_url",  `${baseUrl}/reserva-cancelada.html?id=${reservation.id}`);
     params.append("customer_email", body.guest_email);
-    params.append("expires_at", String(Math.floor(Date.now() / 1000) + 30 * 60)); // 30 min
+    params.append("expires_at", String(Math.floor(Date.now() / 1000) + 30 * 60)); // 30 min (mínimo Stripe)
     params.append("locale", "pt");
 
     // Métodos: cartões + Multibanco + MB WAY (importantes em PT).
@@ -123,14 +147,16 @@ Deno.serve(async (req) => {
     params.append("payment_method_types[1]", "multibanco");
     params.append("payment_method_types[2]", "mb_way");
 
-    // Line item: noite × N
+    // Line item: total como uma única linha (Stripe Checkout não suporta
+    // facilmente preços diferentes por noite; mostramos o total e o detalhe
+    // no description).
     params.append("line_items[0][price_data][currency]", "eur");
     params.append("line_items[0][price_data][product_data][name]",
         `Estadia em ${apt.name}`);
     params.append("line_items[0][price_data][product_data][description]",
-        `${nights} noite(s) · ${body.check_in} → ${body.check_out} · ${body.guests} hóspede(s)`);
-    params.append("line_items[0][price_data][unit_amount]", String(apt.price_per_night_cents));
-    params.append("line_items[0][quantity]", String(nights));
+        `${nights} noite(s) · ${body.check_in} → ${body.check_out} · ${body.guests} hóspede(s) · média €${(avgPerNight/100).toFixed(2)}/noite`);
+    params.append("line_items[0][price_data][unit_amount]", String(totalCents));
+    params.append("line_items[0][quantity]", "1");
 
     // Metadata para o webhook saber a que reserva pertence
     params.append("metadata[reservation_id]", reservation.id);

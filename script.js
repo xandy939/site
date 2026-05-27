@@ -101,26 +101,25 @@ async function gerirSistemaAutenticacao() {
             let generoExibir = "Não especificado";
             let avatarUrl = "";
 
-            // 2. Busca os dados estendidos (incluindo genero/sexo) da tabela profiles
+            // 2. Busca os dados estendidos da tabela profiles (colunas reais
+            // criadas pelo handle_new_user trigger: first_name, last_name,
+            // phone, age, gender, + avatar_url)
             try {
-                // Tenta puxar as colunas comuns. Se a tua coluna se chamar 'sexo' em vez de 'genero', altera abaixo
                 const { data: profile } = await supabaseCtrl
                     .from('profiles')
-                    .select('nome, telefone, avatar_url, genero, sexo')
+                    .select('first_name, last_name, phone, age, gender, avatar_url')
                     .eq('id', userId)
                     .single();
 
                 if (profile) {
-                    if (profile.nome && !nomeEncontrado) { nomeCompleto = profile.nome; nomeEncontrado = true; }
-                    if (profile.telefone) telefoneExibir = profile.telefone;
+                    const fullName = [profile.first_name, profile.last_name].filter(Boolean).join(' ');
+                    if (fullName && !nomeEncontrado) { nomeCompleto = fullName; nomeEncontrado = true; }
+                    if (profile.phone)      telefoneExibir = profile.phone;
                     if (profile.avatar_url) avatarUrl = profile.avatar_url;
-                    
-                    // Verifica se o dado veio guardado na coluna 'genero' ou 'sexo'
-                    if (profile.genero) generoExibir = profile.genero;
-                    else if (profile.sexo) generoExibir = profile.sexo;
+                    if (profile.gender)     generoExibir = profile.gender;
                 }
             } catch (err) {
-                console.warn("Campos extras não encontrados na tabela profiles.");
+                console.warn("Não foi possível ler o perfil:", err.message);
             }
 
             // Fallback inteligente para o primeiro nome
@@ -139,11 +138,12 @@ async function gerirSistemaAutenticacao() {
                 }
             }
 
-            // 1. Injeta o Primeiro Nome no Index
+            // 1. Injeta o pill do utilizador no header
             if (authArea) {
                 authArea.innerHTML = `
-                    <a href="perfil.html" class="user-name" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
-                        👤 Olá, ${primeiroNome}
+                    <a href="perfil.html" class="user-pill">
+                        <span>👤</span>
+                        <span>Olá, ${primeiroNome}</span>
                     </a>
                 `;
             }
