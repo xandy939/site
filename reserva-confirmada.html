@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>By TR Alojamentos | Reserva Confirmada</title>
+    <style>
+        :root {
+            --primary: #1a365d;
+            --brand-blue: #0073e6;
+            --bg: #f2f6fa;
+            --white: #ffffff;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --ok: #137333;
+            --ok-bg: #e6f4ea;
+            --warn: #92400e;
+            --warn-bg: #fef3c7;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: var(--bg); min-height: 100vh; display: flex;
+               flex-direction: column; color: var(--text-main); }
+        header {
+            background: var(--white); display: flex; justify-content: space-between;
+            align-items: center; padding: 20px 5%; border-bottom: 1px solid #e2e8f0;
+        }
+        .logo { font-size: 22px; font-weight: 850; color: var(--primary); text-decoration: none; }
+        .logo span { color: var(--brand-blue); font-weight: 500; }
+
+        main { flex: 1; display: flex; justify-content: center;
+               align-items: center; padding: 40px 20px; }
+
+        .caixa {
+            background: var(--white); max-width: 560px; width: 100%;
+            padding: 50px 40px; border-radius: 20px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #e2e8f0;
+        }
+        .icon-ok {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: var(--ok-bg); display: inline-flex;
+            align-items: center; justify-content: center; font-size: 40px;
+            margin-bottom: 24px;
+        }
+        h1 { color: var(--primary); font-size: 28px; font-weight: 800; margin-bottom: 12px; }
+        .subtit { color: var(--text-muted); font-size: 15px; margin-bottom: 30px; line-height: 1.5; }
+
+        .detalhes {
+            background: #f8fafc; padding: 20px; border-radius: 12px;
+            border: 1px solid #edf2f7; margin-bottom: 24px;
+            text-align: left;
+        }
+        .linha { display: flex; justify-content: space-between;
+                 padding: 10px 0; border-bottom: 1px solid #edf2f7; font-size: 14px; }
+        .linha:last-child { border: none; }
+        .linha b { color: var(--primary); }
+
+        .aviso-multibanco {
+            background: var(--warn-bg); color: var(--warn);
+            border: 1px solid #fde68a; padding: 14px 16px; border-radius: 10px;
+            font-size: 13.5px; text-align: left; margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .aviso-multibanco strong { display: block; margin-bottom: 4px; }
+
+        .btn-voltar {
+            display: inline-block; background: var(--brand-blue); color: white;
+            padding: 12px 28px; border-radius: 100px; text-decoration: none;
+            font-weight: 700; font-size: 14.5px; transition: all 0.2s;
+        }
+        .btn-voltar:hover { background: #005cb8; }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="index.html" class="logo">By TR <span>Alojamentos</span></a>
+</header>
+
+<main>
+    <div class="caixa" id="caixa">
+        <div class="icon-ok">✓</div>
+        <h1 id="titulo">A processar...</h1>
+        <p class="subtit" id="subtit">Aguarda enquanto confirmamos o pagamento.</p>
+        <div id="detalhes-zona"></div>
+        <a href="index.html" class="btn-voltar">Voltar à página inicial</a>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(() => {
+    const SUPABASE_URL      = "https://mfrmkkdqmlfuswggqbra.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1mcm1ra2RxbWxmdXN3Z2dxYnJhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNjM5NDYsImV4cCI6MjA5NDgzOTk0Nn0.T-niRyVa8D8RjXOgKqENbwNoVQFJ95cpfaH--LyfrOE";
+
+    const sessionId = new URLSearchParams(location.search).get("session_id");
+    if (!sessionId) {
+        document.getElementById("titulo").textContent = "Hmm... falta informação";
+        document.getElementById("subtit").textContent = "Não recebemos o identificador da sessão.";
+        return;
+    }
+
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // O webhook da Stripe pode demorar 1-3 segundos a actualizar a reserva.
+    // Faço polling: 6 tentativas, 1s entre cada.
+    let tries = 0;
+    const max = 6;
+    const pollar = async () => {
+        tries++;
+        const { data, error } = await sb
+            .from("reservations")
+            .select("status, check_in, check_out, guests, amount_cents, payment_method, apartments(name)")
+            .eq("stripe_session_id", sessionId)
+            .maybeSingle();
+
+        if (error) console.warn(error);
+
+        if (data && data.status === "confirmed") {
+            renderConfirmada(data);
+            return;
+        }
+        if (data && data.status === "awaiting_payment" && tries < max) {
+            return setTimeout(pollar, 1000);
+        }
+        if (data && data.status === "awaiting_payment") {
+            // provavelmente Multibanco — pagamento ainda em curso
+            renderMultibanco(data);
+            return;
+        }
+        if (data && data.status === "cancelled") {
+            document.getElementById("titulo").textContent = "Pagamento não concluído";
+            document.getElementById("subtit").textContent = "A reserva foi cancelada.";
+            document.querySelector(".icon-ok").textContent = "✕";
+            document.querySelector(".icon-ok").style.background = "#fce8e6";
+            return;
+        }
+        if (tries >= max) {
+            document.getElementById("titulo").textContent = "A processar...";
+            document.getElementById("subtit").textContent = "Vais receber um email assim que o pagamento for confirmado.";
+            return;
+        }
+        setTimeout(pollar, 1000);
+    };
+    pollar();
+
+    function renderConfirmada(r) {
+        document.getElementById("titulo").textContent = "Reserva confirmada!";
+        document.getElementById("subtit").textContent = "Recebemos o pagamento. Vais receber email com os detalhes.";
+        document.getElementById("detalhes-zona").innerHTML = `
+            <div class="detalhes">
+                <div class="linha"><span>Apartamento</span> <b>${esc(r.apartments?.name)}</b></div>
+                <div class="linha"><span>Check-in</span>   <b>${esc(r.check_in)}</b></div>
+                <div class="linha"><span>Check-out</span>  <b>${esc(r.check_out)}</b></div>
+                <div class="linha"><span>Hóspedes</span>   <b>${r.guests}</b></div>
+                <div class="linha"><span>Total pago</span> <b>€ ${(r.amount_cents/100).toFixed(2)}</b></div>
+                ${r.payment_method ? `<div class="linha"><span>Método</span> <b>${esc(r.payment_method)}</b></div>` : ""}
+            </div>
+        `;
+    }
+
+    function renderMultibanco(r) {
+        document.getElementById("titulo").textContent = "Pagamento em curso";
+        document.getElementById("subtit").textContent =
+            "A Stripe está à espera da confirmação. Verifica o teu email com a referência Multibanco.";
+        document.querySelector(".icon-ok").textContent = "⏳";
+        document.querySelector(".icon-ok").style.background = "#fef3c7";
+        document.getElementById("detalhes-zona").innerHTML = `
+            <div class="aviso-multibanco">
+                <strong>Pagamento por referência</strong>
+                Recebeste a referência Multibanco por email. Tens até 3 dias úteis para pagar. As datas ficam reservadas até lá.
+            </div>
+            <div class="detalhes">
+                <div class="linha"><span>Apartamento</span> <b>${esc(r.apartments?.name)}</b></div>
+                <div class="linha"><span>Check-in</span>   <b>${esc(r.check_in)}</b></div>
+                <div class="linha"><span>Check-out</span>  <b>${esc(r.check_out)}</b></div>
+                <div class="linha"><span>Total</span>      <b>€ ${(r.amount_cents/100).toFixed(2)}</b></div>
+            </div>
+        `;
+    }
+
+    function esc(s) {
+        return (s ?? "").toString()
+            .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+    }
+})();
+</script>
+</body>
+</html>

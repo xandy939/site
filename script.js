@@ -164,6 +164,15 @@ async function gerirSistemaAutenticacao() {
                 if (perfFotoPlaceholder) perfFotoPlaceholder.style.display = "none";
             }
 
+            // Mostrar botão de admin se o utilizador for o dono
+            const btnAdmin = document.getElementById("btn-admin");
+            if (btnAdmin) {
+                try {
+                    const { data: ehDono } = await supabaseCtrl.rpc("is_owner");
+                    if (ehDono) btnAdmin.style.display = "block";
+                } catch (_) { /* ignora — RLS bloqueia anónimos, fica escondido */ }
+            }
+
             // --- INTERAÇÃO: ALTERAR PASSWORD DIRETO NO SUPABASE ---
             if (btnAlterarSenha) {
                 btnAlterarSenha.addEventListener("click", async () => {

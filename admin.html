@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>By TR Alojamentos | Administração</title>
+    <style>
+        :root {
+            --primary: #1e293b;
+            --brand-blue: #0073e6;
+            --bg: #f2f6fa;
+            --white: #ffffff;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --ok: #137333;
+            --ok-bg: #e6f4ea;
+            --warn: #92400e;
+            --warn-bg: #fef3c7;
+            --err: #c5221f;
+            --err-bg: #fce8e6;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: var(--bg); color: var(--text-main); min-height: 100vh;
+               display: flex; flex-direction: column; }
+
+        header {
+            background: var(--white); display: flex; justify-content: space-between;
+            align-items: center; padding: 18px 5%; border-bottom: 1px solid #e2e8f0;
+        }
+        .logo { font-size: 22px; font-weight: 850; color: var(--primary); text-decoration: none; }
+        .logo span { color: var(--brand-blue); font-weight: 500; }
+        .btn-voltar {
+            text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 13.5px;
+            padding: 9px 20px; border-radius: 100px; border: 1px solid #e2e8f0; background: var(--white);
+        }
+
+        main { flex: 1; max-width: 1200px; width: 100%; margin: 0 auto; padding: 30px 20px; }
+
+        h1 { font-size: 28px; font-weight: 800; color: var(--primary); margin-bottom: 6px; }
+        .subtitulo { color: var(--text-muted); font-size: 14.5px; margin-bottom: 24px; }
+
+        .filtros {
+            display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;
+        }
+        .filtro-btn {
+            padding: 8px 18px; border-radius: 100px; border: 1px solid #e2e8f0;
+            background: var(--white); font-size: 13.5px; font-weight: 600;
+            color: var(--text-main); cursor: pointer; transition: all 0.2s;
+        }
+        .filtro-btn:hover { border-color: var(--brand-blue); color: var(--brand-blue); }
+        .filtro-btn.active { background: var(--brand-blue); color: var(--white); border-color: var(--brand-blue); }
+
+        .tabela-wrapper {
+            background: var(--white); border-radius: 14px; overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #e2e8f0;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #f8fafc; }
+        th, td {
+            padding: 14px 18px; text-align: left; font-size: 13.5px;
+            border-bottom: 1px solid #edf2f7; vertical-align: middle;
+        }
+        th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+        tbody tr:hover { background: #f8fafc; }
+        tbody tr:last-child td { border-bottom: none; }
+
+        .pill { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 100px;
+                text-transform: uppercase; letter-spacing: 0.3px; display: inline-block; }
+        .pill-pending   { background: var(--warn-bg); color: var(--warn); }
+        .pill-confirmed { background: var(--ok-bg);   color: var(--ok); }
+        .pill-cancelled { background: var(--err-bg);  color: var(--err); }
+        .pill-site      { background: #e0f2fe; color: #0369a1; }
+        .pill-booking   { background: #fef3c7; color: #92400e; }
+
+        .acoes { display: flex; gap: 6px; flex-wrap: wrap; }
+        .btn-acao {
+            padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer;
+            font-size: 12px; font-weight: 700; transition: all 0.2s;
+        }
+        .btn-confirmar { background: var(--ok-bg); color: var(--ok); }
+        .btn-confirmar:hover { background: var(--ok); color: white; }
+        .btn-cancelar  { background: var(--err-bg); color: var(--err); }
+        .btn-cancelar:hover  { background: var(--err); color: white; }
+        .btn-acao:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .vazio { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+        .erro-acesso {
+            background: var(--err-bg); color: var(--err); padding: 20px;
+            border-radius: 12px; border: 1px solid #f8cbc7; max-width: 500px;
+            margin: 60px auto; text-align: center;
+        }
+        .estatisticas {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px; margin-bottom: 24px;
+        }
+        .stat-card {
+            background: var(--white); padding: 18px 20px; border-radius: 12px;
+            border: 1px solid #e2e8f0; box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+        .stat-card .label { font-size: 11px; color: var(--text-muted);
+                            text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
+        .stat-card .valor { font-size: 26px; font-weight: 800; color: var(--primary); margin-top: 4px; }
+
+        @media (max-width: 700px) {
+            th:nth-child(4), td:nth-child(4),
+            th:nth-child(7), td:nth-child(7) { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="index.html" class="logo">By TR <span>Alojamentos</span></a>
+    <a href="index.html" class="btn-voltar">← Voltar ao Site</a>
+</header>
+
+<main>
+    <h1>Reservas</h1>
+    <p class="subtitulo">Painel de administração — gere os pedidos de reserva e a sincronização com o Booking.com.</p>
+
+    <div id="zona-protegida" style="display:none;">
+        <div class="estatisticas" id="estatisticas"></div>
+
+        <div class="filtros" id="filtros">
+            <button class="filtro-btn active" data-filtro="pending">Pendentes</button>
+            <button class="filtro-btn" data-filtro="confirmed">Confirmadas</button>
+            <button class="filtro-btn" data-filtro="cancelled">Canceladas</button>
+            <button class="filtro-btn" data-filtro="todas">Todas</button>
+        </div>
+
+        <div class="tabela-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Apartamento</th>
+                        <th>Hóspede</th>
+                        <th>Datas</th>
+                        <th>Contacto</th>
+                        <th>Origem</th>
+                        <th>Estado</th>
+                        <th>Acções</th>
+                    </tr>
+                </thead>
+                <tbody id="lista-reservas">
+                    <tr><td colspan="7" class="vazio">A carregar...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="zona-bloqueada" class="erro-acesso" style="display:none;">
+        <h3 style="margin-bottom: 10px;">🔒 Acesso restrito</h3>
+        <p style="font-size: 14px; line-height: 1.5;">Esta página é apenas para o dono. Inicia sessão com a conta autorizada.</p>
+        <a href="login.html?next=/admin.html" style="display:inline-block; margin-top: 15px; color: var(--brand-blue); font-weight: 700; text-decoration: none;">Ir para o login →</a>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>By TR Alojamentos | Pagamento Cancelado</title>
+    <style>
+        :root {
+            --primary: #1a365d;
+            --brand-blue: #0073e6;
+            --bg: #f2f6fa;
+            --white: #ffffff;
+            --err: #c5221f;
+            --err-bg: #fce8e6;
+            --text-muted: #64748b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: var(--bg); min-height: 100vh; display: flex;
+               flex-direction: column; color: #334155; }
+        header {
+            background: var(--white); display: flex; justify-content: space-between;
+            align-items: center; padding: 20px 5%; border-bottom: 1px solid #e2e8f0;
+        }
+        .logo { font-size: 22px; font-weight: 850; color: var(--primary); text-decoration: none; }
+        .logo span { color: var(--brand-blue); font-weight: 500; }
+        main { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px 20px; }
+        .caixa {
+            background: var(--white); max-width: 480px; width: 100%;
+            padding: 50px 40px; border-radius: 20px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #e2e8f0;
+        }
+        .icon {
+            width: 70px; height: 70px; border-radius: 50%;
+            background: var(--err-bg); color: var(--err);
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 32px; margin-bottom: 22px; font-weight: 700;
+        }
+        h1 { color: var(--primary); font-size: 24px; font-weight: 800; margin-bottom: 12px; }
+        .subtit { color: var(--text-muted); font-size: 14.5px; margin-bottom: 28px; line-height: 1.5; }
+
+        .btn {
+            display: inline-block; background: var(--brand-blue); color: white;
+            padding: 12px 28px; border-radius: 100px; text-decoration: none;
+            font-weight: 700; font-size: 14.5px; transition: all 0.2s;
+        }
+        .btn:hover { background: #005cb8; }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="index.html" class="logo">By TR <span>Alojamentos</span></a>
+</header>
+
+<main>
+    <div class="caixa">
+        <div class="icon">✕</div>
+        <h1>Pagamento cancelado</h1>
+        <p class="subtit">Não te preocupes — não foi cobrado nada. Se mudares de ideias, podes voltar atrás e tentar de novo.</p>
+        <a href="index.html" class="btn">Voltar ao início</a>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// Marca a reserva como cancelada (se ainda estiver awaiting_payment)
+(async () => {
+    const id = new URLSearchParams(location.search).get("id");
+    if (!id) return;
+    const sb = supabase.createClient(
+        "https://mfrmkkdqmlfuswggqbra.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1mcm1ra2RxbWxmdXN3Z2dxYnJhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNjM5NDYsImV4cCI6MjA5NDgzOTk0Nn0.T-niRyVa8D8RjXOgKqENbwNoVQFJ95cpfaH--LyfrOE"
+    );
+    // A actualização vai falhar (RLS), mas o webhook 'checkout.session.expired'
+    // e o cron de limpeza tratam disto. Apenas tento como cortesia.
+    await sb.from("reservations").update({ status: "cancelled" })
+        .eq("id", id).eq("status", "awaiting_payment");
+})();
+</script>
+</body>
+</html>

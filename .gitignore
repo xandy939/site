@@ -1,0 +1,6 @@
+.supabase-token
+.supabase-service-key
+.env
+.env.local
+.claude/settings.local.json
+.tmp-*

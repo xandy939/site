@@ -30,7 +30,8 @@ window.addEventListener("load", () => {
                     alert("Erro no login: " + error.message);
                 } else if (data?.session) {
                     alert("Login feito com sucesso!");
-                    window.location.href = "index.html"; 
+                    const next = new URLSearchParams(location.search).get("next");
+                    window.location.href = (next && next.startsWith("/")) ? next : "index.html";
                 } else {
                     alert("Erro inesperado ao processar a autenticação.");
                 }
