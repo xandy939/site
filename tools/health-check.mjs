@@ -54,7 +54,7 @@ for (const t of ["reservations_notify_owner","on_auth_user_created","reservation
 
 console.log("\n=== DB crons ===");
 r = await sql(`select jobname, schedule, active from cron.job order by jobname;`);
-for (const exp of [{n:"cleanup_expired_payments",s:"*/5 * * * *"},{n:"ical_import_hourly",s:"7 * * * *"}]) {
+for (const exp of [{n:"cleanup_expired_payments",s:"*/2 * * * *"},{n:"ical_import_hourly",s:"7 * * * *"}]) {
     const j = r.find(x => x.jobname === exp.n);
     log(j?.active && j.schedule === exp.s ? "pass" : "fail", "cron", `${exp.n} (${j?.schedule || "MISSING"})`);
 }

@@ -4,3 +4,4 @@
 .env.local
 .claude/settings.local.json
 .tmp-*
+publicar/

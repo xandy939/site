@@ -59,7 +59,7 @@ Deno.serve(async (req) => {
     // 1. Carrega o apartamento e o preço-base
     const { data: apt, error: aptErr } = await sb
         .from("apartments")
-        .select("id, name, price_per_night_cents, active")
+        .select("id, name, price_per_night_cents, active, cleaning_fee_cents, towel_fee_cents, linen_fee_cents, tourist_tax_per_person_cents")
         .eq("id", body.apartment_id)
         .single();
     if (aptErr || !apt) return json({ error: "Apartamento desconhecido" }, 404);
@@ -86,15 +86,23 @@ Deno.serve(async (req) => {
     }
 
     // Soma o preço de cada noite no intervalo [check_in, check_out)
-    let totalCents = 0;
+    let accommodationCents = 0;
     const cursor = new Date(body.check_in + "T00:00:00Z");
     const end    = new Date(body.check_out + "T00:00:00Z");
     while (cursor < end) {
-        totalCents += priceForDate(cursor.toISOString().slice(0, 10));
+        accommodationCents += priceForDate(cursor.toISOString().slice(0, 10));
         cursor.setUTCDate(cursor.getUTCDate() + 1);
     }
-    if (totalCents <= 0) return json({ error: "Total inválido" }, 500);
-    const avgPerNight = Math.round(totalCents / nights);
+    if (accommodationCents <= 0) return json({ error: "Total inválido" }, 500);
+    const avgPerNight = Math.round(accommodationCents / nights);
+
+    // 1c. Taxas (limpeza/toalhas/cama por estadia; imposto por pessoa por noite)
+    const cleaningCents = apt.cleaning_fee_cents ?? 0;
+    const towelCents    = apt.towel_fee_cents ?? 0;
+    const linenCents    = apt.linen_fee_cents ?? 0;
+    const touristCents  = (apt.tourist_tax_per_person_cents ?? 0) * body.guests * nights;
+
+    const totalCents = accommodationCents + cleaningCents + towelCents + linenCents + touristCents;
 
     // 2. Cria a reserva 'awaiting_payment' (constraint impede sobreposição)
     const { data: reservation, error: insErr } = await sb
@@ -147,16 +155,30 @@ Deno.serve(async (req) => {
     params.append("payment_method_types[1]", "multibanco");
     params.append("payment_method_types[2]", "mb_way");
 
-    // Line item: total como uma única linha (Stripe Checkout não suporta
-    // facilmente preços diferentes por noite; mostramos o total e o detalhe
-    // no description).
-    params.append("line_items[0][price_data][currency]", "eur");
-    params.append("line_items[0][price_data][product_data][name]",
-        `Estadia em ${apt.name}`);
-    params.append("line_items[0][price_data][product_data][description]",
-        `${nights} noite(s) · ${body.check_in} → ${body.check_out} · ${body.guests} hóspede(s) · média €${(avgPerNight/100).toFixed(2)}/noite`);
-    params.append("line_items[0][price_data][unit_amount]", String(totalCents));
-    params.append("line_items[0][quantity]", "1");
+    // Line items: alojamento + cada taxa como linha separada (transparente)
+    let li = 0;
+    function addLineItem(name: string, amountCents: number, description?: string) {
+        if (amountCents <= 0) return;
+        params.append(`line_items[${li}][price_data][currency]`, "eur");
+        params.append(`line_items[${li}][price_data][product_data][name]`, name);
+        if (description) {
+            params.append(`line_items[${li}][price_data][product_data][description]`, description);
+        }
+        params.append(`line_items[${li}][price_data][unit_amount]`, String(amountCents));
+        params.append(`line_items[${li}][quantity]`, "1");
+        li++;
+    }
+
+    addLineItem(
+        `Estadia em ${apt.name}`,
+        accommodationCents,
+        `${nights} noite(s) · ${body.check_in} → ${body.check_out} · ${body.guests} hóspede(s) · média €${(avgPerNight/100).toFixed(2)}/noite`
+    );
+    addLineItem("Taxa de limpeza", cleaningCents);
+    addLineItem("Taxa de toalhas", towelCents);
+    addLineItem("Taxa de roupa de cama", linenCents);
+    addLineItem("Imposto municipal turístico", touristCents,
+        `€${((apt.tourist_tax_per_person_cents ?? 0)/100).toFixed(2)} × ${body.guests} hóspede(s) × ${nights} noite(s)`);
 
     // Metadata para o webhook saber a que reserva pertence
     params.append("metadata[reservation_id]", reservation.id);

@@ -35,6 +35,12 @@
             loadSeasons(sb, apartmentId),
         ]);
         const basePrice = aptInfo?.price_per_night_cents ?? 0;
+        const fees = {
+            cleaning: aptInfo?.cleaning_fee_cents ?? 0,
+            towel:    aptInfo?.towel_fee_cents ?? 0,
+            linen:    aptInfo?.linen_fee_cents ?? 0,
+            taxPerPerson: aptInfo?.tourist_tax_per_person_cents ?? 0,
+        };
         // Função: dado um Date, devolve o preço em cêntimos para essa noite
         const priceFor = (date) => {
             const iso = isoDate(date);
@@ -85,12 +91,17 @@
                 return false;
             },
             setup: (picker) => {
-                picker.on("selected", () => atualizarPrecoVisual(picker, priceFor));
+                picker.on("selected", () => atualizarPrecoVisual(picker, priceFor, fees, parseInt(selHospedes.value, 10)));
                 picker.on("show", () => {
                     decorarDiasComPreco(blockedNights, priceFor);
                     iniciarObservadorPrecos(blockedNights, priceFor);
                 });
             },
+        });
+
+        // Recalcular total quando muda o nº de hóspedes (imposto por pessoa)
+        selHospedes.addEventListener("change", () => {
+            atualizarPrecoVisual(picker, priceFor, fees, parseInt(selHospedes.value, 10));
         });
 
         // ---- 3. Pré-preencher com dados do utilizador ---------------------
@@ -226,7 +237,7 @@
 
     // ---- Preço dinâmico ----------------------------------------------------
 
-    function atualizarPrecoVisual(picker, priceFor) {
+    function atualizarPrecoVisual(picker, priceFor, fees, guests) {
         const el = document.getElementById("preco-total");
         if (!el) return;
         const s = picker.getStartDate();
@@ -234,29 +245,41 @@
         if (!s || !e) { el.style.display = "none"; return; }
 
         // Iterar pelas noites e somar com o preço de cada uma
-        const breakdown = {};            // { "€110": 3, "€135": 2 } — para agrupar
-        let totalCents = 0;
+        const breakdown = {};
+        let accommodationCents = 0;
         let nights = 0;
         const cursor = new Date(s.toJSDate());
         const end    = new Date(e.toJSDate());
         while (cursor < end) {
             const c = priceFor(cursor);
-            totalCents += c;
+            accommodationCents += c;
             nights++;
-            const key = "€" + Math.round(c / 100);
+            const key = Math.round(c / 100);
             breakdown[key] = (breakdown[key] || 0) + 1;
             cursor.setDate(cursor.getDate() + 1);
         }
         if (nights < 1) { el.style.display = "none"; return; }
 
-        // Construir linhas agrupadas (ex: "€110 × 2 noites", "€135 × 1 noite")
-        const linhas = Object.entries(breakdown).map(([preco, n]) =>
-            `<div class="line"><span>${preco} × ${n} noite${n>1?'s':''}</span><span>€${(parseInt(preco.slice(1))*n).toFixed(2)}</span></div>`
+        const linhasAloj = Object.entries(breakdown).map(([preco, n]) =>
+            `<div class="line"><span>€${preco} × ${n} noite${n>1?'s':''}</span><span>€${(preco*n).toFixed(2)}</span></div>`
         ).join("");
+
+        const f = fees || {};
+        const g = guests || 1;
+        const taxTotal = (f.taxPerPerson || 0) * g * nights;
+        const taxasCents = (f.cleaning||0) + (f.towel||0) + (f.linen||0) + taxTotal;
+        const totalCents = accommodationCents + taxasCents;
+
+        const linhaTaxa = (label, cents) => cents > 0
+            ? `<div class="line"><span>${label}</span><span>€${(cents/100).toFixed(2)}</span></div>` : "";
 
         el.style.display = "block";
         el.innerHTML = `
-            ${linhas}
+            ${linhasAloj}
+            ${linhaTaxa("Limpeza", f.cleaning)}
+            ${linhaTaxa("Toalhas", f.towel)}
+            ${linhaTaxa("Roupa de cama", f.linen)}
+            ${linhaTaxa(`Imposto municipal (€${((f.taxPerPerson||0)/100).toFixed(2)} × ${g} × ${nights} noite${nights>1?'s':''})`, taxTotal)}
             <div class="total"><span>Total</span><span>€${(totalCents/100).toFixed(2)}</span></div>
         `;
     }
@@ -266,7 +289,7 @@
     async function loadApartment(sb, apartmentId) {
         const { data } = await sb
             .from("apartments")
-            .select("id, name, price_per_night_cents, active")
+            .select("id, name, price_per_night_cents, active, cleaning_fee_cents, towel_fee_cents, linen_fee_cents, tourist_tax_per_person_cents")
             .eq("id", apartmentId)
             .single();
         return data;

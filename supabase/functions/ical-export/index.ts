@@ -14,8 +14,17 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 Deno.serve(async (req) => {
     const url  = new URL(req.url);
-    const apt  = url.searchParams.get("apt");
-    if (!apt) return new Response("?apt=<apartment_id> em falta", { status: 400 });
+    // Suporta dois formatos:
+    //   ?apt=litoral-mar          (query string)
+    //   /ical-export/litoral-mar.ics  (path terminado em .ics — exigido por
+    //                                  alguns canais como o Holidu)
+    let apt = url.searchParams.get("apt");
+    if (!apt) {
+        const seg = url.pathname.split("/").filter(Boolean).pop() || "";
+        apt = seg.replace(/\.ics$/i, "");
+        if (apt === "ical-export") apt = "";   // nada no path
+    }
+    if (!apt) return new Response("apartment_id em falta (use ?apt=<id> ou /<id>.ics)", { status: 400 });
 
     const sb = createClient(
         Deno.env.get("SUPABASE_URL")!,

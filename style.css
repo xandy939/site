@@ -100,7 +100,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
     letter-spacing: -0.01em;
     line-height: 1.15;
 }
-.h-display { font-size: clamp(40px, 6vw, 72px); font-weight: 500; }
+.h-display { font-size: clamp(32px, 4.5vw, 52px); font-weight: 500; }
 .h-1       { font-size: clamp(32px, 4.5vw, 52px); }
 .h-2       { font-size: clamp(24px, 3vw, 36px); }
 .h-3       { font-size: clamp(20px, 2.2vw, 26px); }
@@ -300,16 +300,16 @@ header.site-header {
 /* ---- 10. Hero / Showcase ----------------------------------------------- */
 .hero {
     position: relative;
-    min-height: 70vh;
+    min-height: 52vh;
     display: flex;
     align-items: flex-end;
     color: var(--white);
-    overflow: hidden;
     background: var(--navy);
 }
 .hero__media {
     position: absolute; inset: 0;
     z-index: 1;
+    overflow: hidden;   /* corta só a imagem, nunca o texto */
 }
 .hero__media img {
     width: 100%; height: 100%; object-fit: cover;
@@ -323,9 +323,10 @@ header.site-header {
     position: relative; z-index: 2;
     max-width: var(--container);
     margin: 0 auto;
-    padding: var(--s-9) var(--s-5) var(--s-8);
+    padding: var(--s-7) var(--s-5) var(--s-7);
     width: 100%;
 }
+.hero__inner .h-display { line-height: 1.2; padding-bottom: 0.08em; }
 .hero__inner .eyebrow { color: rgba(255,255,255,0.85); }
 .hero__inner .h-display { color: var(--white); margin-top: var(--s-3); max-width: 700px; }
 .hero__inner .body-lg { color: rgba(255,255,255,0.85); margin-top: var(--s-4); max-width: 560px; }
@@ -364,6 +365,14 @@ header.site-header {
     transition: opacity 1s ease-in-out;
 }
 .property-card__media .card-slide.active { opacity: 1; }
+
+/* Logo dentro do card: mostrar inteiro (proporcional), com fundo claro */
+.property-card__media .card-slide.is-logo {
+    object-fit: contain;
+    background: var(--cream);
+    padding: var(--s-4);
+    box-sizing: border-box;     /* sem isto o padding empurra a imagem para fora e corta */
+}
 .property-card__badge {
     position: absolute;
     top: var(--s-4); left: var(--s-4);
@@ -556,6 +565,7 @@ footer.site-footer {
     position: relative;
     width: 100%;
     aspect-ratio: 16 / 9;
+    max-height: 460px;
     background: var(--navy-deep);
     overflow: hidden;
     border-radius: var(--radius-lg);

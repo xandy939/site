@@ -100,17 +100,37 @@ Para o novo dono assumir o controlo total:
 
 Por ordem de prioridade:
 
-1. **Publicar o site online** — está a correr só localmente. Opções grátis:
-   Netlify, Cloudflare Pages, Vercel (ligam ao GitHub e dão um URL em minutos).
-2. **Comprar um domínio** (~€10/ano) — ex: `bytralojamentos.pt`. Resolve URL do
-   site + emails profissionais.
-3. **Activar pagamentos reais** — escolher provider (Stripe / Viva / IfthenPay),
-   activar a conta (NIF + IBAN + documentos), trocar de "test" para "live".
-4. **Configurar o webhook de pagamento** — sem ele, pagamentos não confirmam no site.
-5. **Verificar domínio no Resend** — para enviar emails de qualquer remetente.
-6. **Ligar Booking do Paraíso do Sol** — falta colar o URL iCal (Litoral Mar já está).
+1. **Webhook do Stripe (`whsec_...`)** — sem ele, pagamentos chegam ao Stripe mas
+   o nosso site não sabe e a reserva fica em limbo (cancelada pelo cron ao fim de 32min).
+   Configurar em https://dashboard.stripe.com/test/webhooks (test mode) ou /webhooks (live).
+2. **Gmail App Password** — sem ele, **nenhum email sai** (dono nem hóspede).
+   Gerar em https://myaccount.google.com/apppasswords e meter como secret
+   `GMAIL_APP_PASSWORD` no Supabase.
+3. **Publicar o site permanentemente** — actualmente publicado em Netlify Drop
+   temporário (1h por sessão). Para permanente: criar conta grátis Netlify/
+   Cloudflare/Vercel e arrastar a pasta `publicar/`.
+4. **Activar pagamentos reais (Stripe live mode)** — neste momento só funciona
+   em modo teste. Activar conta: NIF + IBAN + documentos, espera 1-3 dias.
+   Depois substituir secrets `STRIPE_SECRET_KEY` (sk_live_) e `STRIPE_WEBHOOK_SECRET`.
+5. **Domínio próprio** (~€10/ano) — ex: `bytralojamentos.pt`. Permite URL
+   profissional + emails do teu domínio (resolve limite Resend / Gmail SMTP).
+6. **URL iCal do Paraíso do Sol no Booking** — só Litoral Mar está sincronizado.
+   Quando o Paraíso estiver listado no Booking, copiar o URL `.ics` e configurar.
+7. **Foto da piscina do Paraíso** — actualmente o cartão da homepage mostra só o
+   logo. Adicionar foto da piscina como `imagens/paraiso-piscina.png` e referenciá-la.
 
 Todos estes passos estão detalhados em **SETUP.md**.
+
+## 6.1 Acessos de administração
+
+A função SQL `is_owner()` reconhece como admins os emails listados em
+`app_settings.owner_email` (separados por vírgula). Actualmente:
+- `miguelpararegistrar@gmail.com`
+- `mfralmeida.2008@gmail.com`
+- `xandy939@gmail.com`
+
+Qualquer um deles consegue ver o botão **"Painel de Administração"** no perfil
+e aceder ao `admin.html` com permissões completas.
 
 ---
 
