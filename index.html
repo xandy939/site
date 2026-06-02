@@ -8,13 +8,94 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* Logo no cabeçalho */
+        .brand--logo {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            line-height: 1;
+        }
+
+        .brand--logo img {
+            display: block;
+            height: 78px;
+            width: auto;
+            max-width: 210px;
+            object-fit: contain;
+            filter: drop-shadow(0 8px 18px rgba(0, 0, 0, .35));
+        }
+
+        @media (max-width: 700px) {
+            .brand--logo img {
+                height: 58px;
+                max-width: 160px;
+            }
+
+            .site-header__inner {
+                gap: 12px;
+            }
+        }
+        .hero__media {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+        }
+        .hero__media video,
+        .hero__media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .hero {
+            position: relative;
+            min-height: 56vh;
+            display: flex;
+            align-items: flex-end;
+            color: var(--white);
+            background: var(--navy);
+        }
+        .hero__inner {
+            position: relative;
+            z-index: 2;
+            max-width: var(--container);
+            margin: 0 auto;
+            padding: var(--s-7) var(--s-5);
+            width: 100%;
+        }
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(14,23,41,0.15) 0%, rgba(14,23,41,0.65) 100%);
+            z-index: 1;
+        }
+        /* Texto do hero — proporções limpas e respiráveis */
+        .hero .eyebrow { color: rgba(255,255,255,0.85); }
+        .hero .h-display {
+            color: var(--white);
+            font-size: clamp(30px, 4vw, 48px);
+            line-height: 1.2;
+            margin-top: var(--s-3);
+            max-width: 680px;
+            padding-bottom: 0.08em;
+        }
+        .hero .body-lg {
+            color: rgba(255,255,255,0.85);
+            font-size: clamp(15px, 1.6vw, 18px);
+            line-height: 1.6;
+            margin-top: var(--s-4);
+            max-width: 560px;
+        }
+    </style>
 </head>
 <body>
 
 <header class="site-header">
     <div class="site-header__inner">
-        <a href="index.html" class="brand">
-            Alojamentos Algarve<small>By TR</small>
+        <a href="index.html" class="brand brand--logo" aria-label="Apartamentos Turísticos By TR">
+            <img src="imagens/logo-apartamentos-header-white.png" alt="Apartamentos Turísticos By TR">
         </a>
         <div class="nav-actions" id="auth-area">
             <a href="login.html" class="btn btn-ghost btn-sm">Iniciar Sessão</a>
@@ -25,7 +106,11 @@
 
 <section class="hero">
     <div class="hero__media">
-        <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/664384502.jpg?k=acfd681463efe7d67e77e3f69bff858c863cd120f13f9cf1f756dc146fe1d5e4&o=" alt="Praia da Rocha">
+        <video autoplay muted loop playsinline
+               poster="https://cf.bstatic.com/xdata/images/hotel/max1024x768/664384502.jpg?k=acfd681463efe7d67e77e3f69bff858c863cd120f13f9cf1f756dc146fe1d5e4&o=">
+            <source src="imagens/hero-video.mp4" type="video/mp4">
+            <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/664384502.jpg?k=acfd681463efe7d67e77e3f69bff858c863cd120f13f9cf1f756dc146fe1d5e4&o=" alt="Praia da Rocha">
+        </video>
     </div>
     <div class="hero__inner">
         <span class="eyebrow">Apartamentos · Praia da Rocha · Algarve</span>
@@ -48,6 +133,7 @@
                     <span class="property-card__badge">Praia · 300m</span>
                     <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/664384502.jpg?k=acfd681463efe7d67e77e3f69bff858c863cd120f13f9cf1f756dc146fe1d5e4&o=" alt="Piscina Litoral Mar" class="card-slide active is-logo">
                     <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/87666305.jpg?k=cfac75c617c54342386963f8d490e120454538ea99436f73d9e6f67cbd13253f&o=" alt="Litoral Mar Interior" class="card-slide is-logo">
+                    <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/87666284.jpg?k=ac35a81f03c927e46e5fd674fdc5d3170bd7f3223ce60e4519c64e595fceb79f&o=" alt="Litoral Mar" class="card-slide is-logo">
                 </div>
                 <div class="property-card__body">
                     <span class="property-card__location">Portimão · Praia da Rocha</span>
@@ -58,7 +144,7 @@
                         <li><span class="ico">⊙</span> Wi-Fi grátis</li>
                         <li><span class="ico">⊙</span> Cozinha equipada</li>
                         <li><span class="ico">⊙</span> Piscina exterior</li>
-                        <li><span class="ico">⊙</span> 1 quarto · 2 hóspedes</li>
+                        <li><span class="ico">⊙</span> 1 quarto · 3 hóspedes</li>
                     </ul>
                     <div class="property-card__footer">
                         <span class="status-pill available">Disponível</span>
@@ -69,8 +155,10 @@
 
             <article class="property-card card">
                 <div class="property-card__media">
-                    <span class="property-card__badge">Praia · 350m</span>
+                    <span class="property-card__badge">Praia · 300m</span>
                     <img src="imagens/paraiso-logo.png" alt="Paraíso Sol da Rocha" class="card-slide active is-logo">
+                    <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/146373900.jpg?k=17b1244b20ae1afcff010763b66d635d51930b0d7b2aa3d51b95195fb744d7a0&o=" alt="Sala/cozinha Paraíso do Sol" class="card-slide">
+                    <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/146373879.jpg?k=393350eaf248382c350fd3c91c8cc6c9b0f4672c98ad82d28ae704c72a2eb963&o=" alt="Sala Paraíso do Sol" class="card-slide">
                 </div>
                 <div class="property-card__body">
                     <span class="property-card__location">Portimão · Praia da Rocha</span>
@@ -78,8 +166,10 @@
                     <ul class="property-card__amenities">
                         <li><span class="ico">⊙</span> 3 piscinas (interior incl.)</li>
                         <li><span class="ico">⊙</span> Estacionamento gratuito</li>
+                         <li><span class="ico">⊙</span> 1 quarto · 3 hóspedes</li>
                         <li><span class="ico">⊙</span> Varanda com vista</li>
                         <li><span class="ico">⊙</span> Wi-Fi grátis</li>
+                          <li><span class="ico">⊙</span> Cozinha equipada</li>
                     </ul>
                     <div class="property-card__footer">
                         <span class="status-pill coming">Brevemente</span>
