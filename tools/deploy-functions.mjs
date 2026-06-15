@@ -8,11 +8,13 @@ const token = fs.readFileSync(".supabase-token", "utf8").trim();
 const PROJ  = "mfrmkkdqmlfuswggqbra";
 
 const functions = [
-    { slug: "notify-owner",   verify_jwt: true,  file: "supabase/functions/notify-owner/index.ts"   },
-    { slug: "ical-export",    verify_jwt: false, file: "supabase/functions/ical-export/index.ts"    },
-    { slug: "ical-import",    verify_jwt: true,  file: "supabase/functions/ical-import/index.ts"    },
-    { slug: "create-checkout",verify_jwt: false, file: "supabase/functions/create-checkout/index.ts"},
-    { slug: "stripe-webhook", verify_jwt: false, file: "supabase/functions/stripe-webhook/index.ts" },
+    { slug: "notify-owner",        verify_jwt: true,  file: "supabase/functions/notify-owner/index.ts"        },
+    { slug: "ical-export",         verify_jwt: false, file: "supabase/functions/ical-export/index.ts"         },
+    { slug: "ical-import",         verify_jwt: true,  file: "supabase/functions/ical-import/index.ts"         },
+    { slug: "gerar-referencia-mb", verify_jwt: false, file: "supabase/functions/gerar-referencia-mb/index.ts" },
+    { slug: "gerar-reserva-iban",  verify_jwt: false, file: "supabase/functions/gerar-reserva-iban/index.ts"  },
+    { slug: "ifthenpay-callback",  verify_jwt: false, file: "supabase/functions/ifthenpay-callback/index.ts"  },
+    { slug: "delete-user-account", verify_jwt: false, file: "supabase/functions/delete-user-account/index.ts" },
 ];
 
 // Permite deploy selectivo: `node tools/deploy-functions.mjs create-checkout stripe-webhook`

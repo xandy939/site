@@ -68,6 +68,21 @@ async function gerirSistemaAutenticacao() {
     try {
         const { data: { session } } = await supabaseCtrl.auth.getSession();
 
+        // Se o utilizador chegou via link de recuperação de password, mostra prompt logo
+        if (new URLSearchParams(location.search).get("reset") === "1" && session?.user) {
+            setTimeout(async () => {
+                const novaSenha = prompt("Define a tua nova palavra-passe (mínimo 6 caracteres):");
+                if (novaSenha === null) return;
+                if (novaSenha.trim().length < 6) { alert("A password deve ter pelo menos 6 caracteres."); return; }
+                const { error } = await supabaseCtrl.auth.updateUser({ password: novaSenha.trim() });
+                if (error) alert("Erro: " + error.message);
+                else {
+                    alert("Password actualizada com sucesso! Já podes fazer login normalmente.");
+                    history.replaceState(null, "", "perfil.html");
+                }
+            }, 400);
+        }
+
         const authArea = document.getElementById("auth-area");
         const perfNome = document.getElementById("perf-nome");
         const perfUsername = document.getElementById("perf-username");
@@ -196,6 +211,37 @@ async function gerirSistemaAutenticacao() {
                         alert("Password alterada com sucesso!");
                     }
                 });
+            }
+
+            // ---- MINHAS RESERVAS (histórico do utilizador) ----
+            const wrapReservas = document.getElementById("minhas-reservas-wrap");
+            const listaReservas = document.getElementById("minhas-reservas");
+            if (wrapReservas && listaReservas) {
+                wrapReservas.style.display = "block";
+                const { data: reservas } = await supabaseCtrl
+                    .from("reservations")
+                    .select("id, check_in, check_out, status, payment_method, amount_cents, apartments(name)")
+                    .eq("user_id", userId)
+                    .order("check_in", { ascending: false });
+
+                if (!reservas || reservas.length === 0) {
+                    listaReservas.innerHTML = `<p style="color: var(--muted);">Ainda não tens reservas no nosso site.</p>`;
+                } else {
+                    const labelStatus = (s) => ({pending:"Pendente",awaiting_payment:"A aguardar pagamento",confirmed:"Confirmada",cancelled:"Cancelada"}[s] || s);
+                    const formatDate = (d) => { const [y,m,dd] = d.split("-"); return `${dd}/${m}/${y}`; };
+                    listaReservas.innerHTML = reservas.map(r => `
+                        <div style="border:1px solid var(--line-soft); border-radius:10px; padding:14px 16px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+                            <div>
+                                <div style="font-weight:600; color:var(--navy);">${r.apartments?.name || "—"}</div>
+                                <div style="font-size:13px; color:var(--muted); margin-top:2px;">${formatDate(r.check_in)} → ${formatDate(r.check_out)}${r.payment_method ? ` · ${r.payment_method}` : ""}</div>
+                            </div>
+                            <div style="text-align:right;">
+                                ${r.amount_cents ? `<div style="font-weight:600;">€ ${(r.amount_cents/100).toFixed(2)}</div>` : ""}
+                                <span class="pill pill-${r.status}" style="font-size:11px; padding:3px 10px; border-radius:999px; background:var(--cream); color:var(--navy);">${labelStatus(r.status)}</span>
+                            </div>
+                        </div>
+                    `).join("");
+                }
             }
 
             // EVENTO UPLOAD DE FOTO

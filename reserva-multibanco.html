@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>By TR Alojamentos · Referência Multibanco</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .mb-card {
+            background: var(--white);
+            border: 1px solid var(--line-soft);
+            border-radius: var(--radius-lg);
+            padding: var(--s-7) var(--s-6);
+            max-width: 560px;
+            width: 100%;
+            box-shadow: var(--sh-2);
+        }
+        .mb-icon {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            background: var(--warn-bg);
+            color: var(--warn);
+            margin: 0 auto var(--s-4);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: 600;
+        }
+        .mb-ref-box {
+            background: var(--cream);
+            border: 2px dashed var(--gold);
+            border-radius: var(--radius);
+            padding: var(--s-5);
+            margin: var(--s-5) 0;
+            text-align: center;
+        }
+        .mb-ref-box .row { margin-bottom: var(--s-3); }
+        .mb-ref-box .label {
+            font-size: 11px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .mb-ref-box .value {
+            font-family: var(--font-serif);
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--navy);
+            letter-spacing: 0.05em;
+        }
+        .mb-ref-box .value-mono {
+            font-family: 'Courier New', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--navy);
+            letter-spacing: 0.08em;
+        }
+        .instrucoes {
+            background: #f0f7ff;
+            border-left: 4px solid var(--atlantic);
+            padding: var(--s-4);
+            border-radius: var(--radius);
+            margin-bottom: var(--s-4);
+            font-size: 14px;
+            line-height: 1.6;
+            text-align: left;
+        }
+        .instrucoes strong { color: var(--navy); }
+    </style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="site-header__inner">
+        <a href="index.html" class="brand">
+            Alojamentos Algarve<small>By TR</small>
+        </a>
+    </div>
+</header>
+
+<div class="auth-wrap">
+    <div class="mb-card" style="text-align: center;">
+        <div class="mb-icon">€</div>
+        <h1 style="font-family: var(--font-serif); font-size: 30px; color: var(--navy); margin-bottom: var(--s-3);">
+            Reserva pré-confirmada
+        </h1>
+        <p style="color: var(--muted); margin-bottom: var(--s-4);">
+            Falta apenas pagar a referência Multibanco abaixo. Quando pagares, recebes confirmação por email.
+        </p>
+
+        <div id="mb-detalhes" class="mb-ref-box">
+            <p style="color: var(--muted);">A carregar referência...</p>
+        </div>
+
+        <div class="instrucoes">
+            <strong>Como pagar:</strong>
+            <ol style="margin: var(--s-2) 0 0 var(--s-4); padding: 0;">
+                <li>Caixa Multibanco / Homebanking / app do banco</li>
+                <li>"Pagamentos e Outros Serviços" → "Pagamento de Serviços/Compras"</li>
+                <li>Introduz <strong>Entidade</strong>, <strong>Referência</strong> e <strong>Valor</strong> acima</li>
+                <li>Confirmar — a reserva é confirmada automaticamente em poucos minutos</li>
+            </ol>
+        </div>
+
+        <p style="font-size: 12.5px; color: var(--muted); margin-bottom: var(--s-4);">
+            ⏰ Esta referência <strong>expira em 3 dias</strong>. Se não pagares até lá, a reserva é automaticamente cancelada e as datas voltam a ficar livres.
+        </p>
+
+        <a href="index.html" class="btn btn-ghost btn-lg" style="margin-top: var(--s-3);">Voltar à página inicial</a>
+        <div style="margin-top: var(--s-4); font-size: 11px; color: var(--muted);">
+            🔒 Pagamento processado por <strong style="color: var(--navy);">IfthenPay</strong>
+        </div>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <div class="container">
+        <div class="footer-col">
+            <h4>By TR Alojamentos</h4>
+            <p>Apartamentos turísticos em Praia da Rocha, Portimão.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Contacto</h4>
+            <p><a href="mailto:apt.turisticos.algarve@tudopararegistar.pt">apt.turisticos.algarve@tudopararegistar.pt</a></p>
+        </div>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-copy">© 2026 By TR Alojamentos · Todos os direitos reservados</div>
+</footer>
+
+<script>
+(() => {
+    const p = new URLSearchParams(location.search);
+    const entidade = p.get("entidade");
+    const referencia = p.get("referencia");
+    const valor = p.get("valor");
+    const expira = p.get("expira");
+
+    const el = document.getElementById("mb-detalhes");
+    if (!entidade || !referencia || !valor) {
+        el.innerHTML = '<p style="color:#c5221f;">Faltam dados — voltar e tentar novamente.</p>';
+        return;
+    }
+
+    el.innerHTML = `
+        <div class="row">
+            <div class="label">Entidade</div>
+            <div class="value-mono">${esc(entidade)}</div>
+        </div>
+        <div class="row">
+            <div class="label">Referência</div>
+            <div class="value-mono">${esc(formatRef(referencia))}</div>
+        </div>
+        <div class="row" style="margin-bottom: 0;">
+            <div class="label">Valor a pagar</div>
+            <div class="value">€ ${esc(valor)}</div>
+        </div>
+    `;
+
+    function esc(s) {
+        return (s ?? "").toString()
+            .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+    }
+    function formatRef(s) {
+        // Formato típico Multibanco: 9 dígitos em grupos de 3 (XXX XXX XXX)
+        const clean = (s || "").replace(/\s/g, "");
+        if (clean.length === 9) return clean.replace(/(\d{3})(\d{3})(\d{3})/, "$1 $2 $3");
+        return s;
+    }
+})();
+</script>
+</body>
+</html>

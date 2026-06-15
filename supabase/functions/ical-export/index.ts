@@ -38,11 +38,15 @@ Deno.serve(async (req) => {
         .single();
     if (!aptRow) return new Response("Apartamento desconhecido", { status: 404 });
 
+    // IMPORTANTE: NÃO incluir reservas com source='booking' senão criamos um
+    // loop — o Booking importaria as suas próprias reservas como "calendário
+    // externo" e ao limpar duplicados perderíamos tudo.
     const { data: reservas, error } = await sb
         .from("reservations")
         .select("id, check_in, check_out, guest_name, source, external_uid, created_at")
         .eq("apartment_id", apt)
-        .eq("status", "confirmed");
+        .eq("status", "confirmed")
+        .neq("source", "booking");
 
     if (error) return new Response("Erro: " + error.message, { status: 500 });
 
@@ -73,7 +77,7 @@ Deno.serve(async (req) => {
         "PRODID:-//By TR Alojamentos//Reservations//PT",
         "CALSCALE:GREGORIAN",
         "METHOD:PUBLISH",
-        `X-WR-CALNAME:${escIcs(aptName)}`,
+        `X-WR-CALNAME:${escIcs("Calendario APTTA By TR — " + aptName.replace(/^By TR — /, ""))}`,
         `X-WR-TIMEZONE:Europe/Lisbon`,
         ...events,
         "END:VCALENDAR",

@@ -366,12 +366,17 @@ header.site-header {
 }
 .property-card__media .card-slide.active { opacity: 1; }
 
-/* Logo dentro do card: mostrar inteiro (proporcional), com fundo claro */
+/* Logo dentro do card: esticar para preencher o card todo */
 .property-card__media .card-slide.is-logo {
+    object-fit: fill;            /* fill = estica sem manter proporção, ambos os logos ficam à medida do card */
+    background: var(--cream);
+    padding: 2%;
+    box-sizing: border-box;
+}
+/* Foto inteira (sem cortes) com fundo cream — moldura suave */
+.property-card__media .card-slide.is-fit {
     object-fit: contain;
     background: var(--cream);
-    padding: var(--s-4);
-    box-sizing: border-box;     /* sem isto o padding empurra a imagem para fora e corta */
 }
 .property-card__badge {
     position: absolute;
@@ -917,6 +922,8 @@ td.vazio { text-align: center; color: var(--muted); padding: var(--s-7) !importa
     font-weight: 500;
     margin-top: 2px;
     letter-spacing: 0.02em;
+    pointer-events: none;          /* deixa o clique passar para o dia */
+    user-select: none;
 }
 .litepicker .day-item.is-today .price-tag,
 .litepicker .day-item.is-start-date .price-tag,

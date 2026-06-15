@@ -3,11 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>By TR · Paraíso do Sol · Apartamento em Praia da Rocha</title>
+    <title>By TR · Paraíso Sol da Rocha · Apartamento em Praia da Rocha</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Correção do carrossel:
+           - A imagem de localização/mapa não deve ser cortada.
+           - Mantém as restantes fotos com o comportamento original do site. */
+        .detail-gallery .slide.slide-contain {
+            object-fit: contain !important;
+            object-position: center center !important;
+            background: #fff;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 768px) {
+            .detail-gallery .slide.slide-contain {
+                padding: 6px;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -25,30 +43,45 @@
 
         <div style="margin-bottom: var(--s-5);">
             <span class="eyebrow">Portimão · Praia da Rocha</span>
-            <h1 class="h-1" style="margin-top: var(--s-2);">Paraíso do Sol</h1>
+            <h1 class="h-1" style="margin-top: var(--s-2);">Paraíso Sol da Rocha</h1>
             <p class="body" style="margin-top: var(--s-2); color: var(--muted);">
                 1 quarto · 2 camas · 1 casa de banho · até 3 hóspedes
+            </p>
+            <p class="body" style="margin-top: var(--s-2); color: var(--muted);">
+                RNAL nº 10372/AL
             </p>
         </div>
 
         <section class="detail-gallery">
-            <div class="contador-fotos" id="fotoContador">1/16</div>
-            <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/103232811.jpg?k=218f97f25fb6e27bec878bd1d4a4d17d5e7328d5c5eff8e089e54051ff9558ef&o=" class="slide active">
-            <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/121612508.jpg?k=410085493374a393f44059460e880d35107a8754514e89f2ee7545dad9a4b5fc&o=" class="slide">
-            <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/179378680.jpg?k=c36cf5d6ded527669e32e802b0abf5aea486aee384ef58e6c8a9a6d064c7dc28&o=" class="slide">
-            <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/121613058.jpg?k=35ba04794d122a9cee3663a127cdd6ac1e4f666a38dfe6f86e9f051bbbb0872d&o=" class="slide">
-            <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/104661657.jpg?k=acafef409bf8ffd3adb9f012318c122a5a27cca019e034e8ccb4e81703f7b041&o=" class="slide">
-            <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/146374113.jpg?k=e999831703f142fe39e78cd1c2363ee1b3c3dc3d33ce9bd06d846bcfe1471bf6&o=" class="slide">
-            <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/121612504.jpg?k=9492b554f8a3649104df9f04ad4ee9ba1654c3cf447ba2c1c916f31cc508cc70&o=" class="slide">
-            <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/121613092.jpg?k=63dbf0441aebf12f0a0d4d36bcf77010cee0ac18ff2aea464f6ee34b22b1c395&o=" class="slide">
-            <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/154954366.jpg?k=59df025b14fb8fd8f88c24cb5b9c76c0e6177982924087960add7eabdb1c429a&o=" class="slide">
-            <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/146376505.jpg?k=7b7c86d621f43e4cc5f93d7350c203577ce67333b9f82fd2c16f793958c07604&o=" class="slide">
-            <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/103232858.jpg?k=fcadc1620c8551fcb21c1ecf0fd3aabf14b30738089f0ec416e342c1dffedd1c&o=" class="slide">
-            <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/146373873.jpg?k=3630a245e1d1e6a7e9631d72de98db9e69b34a4442918cc79a9190a572cc0ada&o=" class="slide">
-            <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/100287009.jpg?k=2a33a5825ae58f63983ec00499ea8a21c4d25cc05d2d81c49aeb72242b16c081&o=" class="slide">
-            <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/146376470.jpg?k=393aec1e5f3fb8a774cd33e1629edd7f05786574c065f79fd884597b3ff539bf&o=" class="slide">
-            <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/146373845.jpg?k=2342c7f79741832d366d8c2eaa33b8558ad951c4da464308ae0e776cf8d79934&o=" class="slide">
-            <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/100287017.jpg?k=7158999d87abf8b8adf611f01814bfb7e658b37294901ff66a9e2ed6508a7e1d&o=" class="slide">
+            <div class="contador-fotos" id="fotoContador">1/28</div>
+            <img src="imagens/paraiso/876834571.jpg" class="slide active" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/356492192.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/876834487.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/876834569.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/876834599.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/876834594.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/876834593.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/876834590.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/876834772.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/876835477.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/881427950.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/881427970.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/881427979.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/881427985.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/881427997.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/881427999.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/881428001.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/881428004.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/881428006.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/881428009.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/881428011.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/881428012.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/881428014.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/881428015.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/881428016.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/881428017.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/paraiso/881428022.jpg" class="slide" alt="Paraíso Sol da Rocha">
+            <img src="imagens/localizacao-paraiso-sol-rocha.png" alt="Localização do Edifício Paraíso Sol da Rocha até à praia" class="slide slide-contain">
             <button class="seta anterior" onclick="mudarSlide(-1)" aria-label="Anterior">❮</button>
             <button class="seta seguinte" onclick="mudarSlide(1)" aria-label="Seguinte">❯</button>
         </section>
@@ -79,18 +112,13 @@
                 <div class="detail-block">
                     <h3>Descrição</h3>
                     <p class="detail-prose">
-                        O Paraíso do Sol oferece a combinação perfeita de conforto e localização privilegiada no complexo Charme Paraíso Sol, na Praia da Rocha. Totalmente equipado, com excelentes áreas de lazer e três piscinas (incluindo uma interior), é o espaço ideal para desfrutar do melhor que Portimão tem para oferecer em qualquer estação do ano. O complexo conta ainda com bar, jardim e serviço de pequeno-almoço excepcional.
+                       O Edifício Paraíso Sol da Rocha, localizado na Praia da Rocha em Portimão, oferece excelentes comodidades para férias, incluindo 2 piscinas exteriores,1 piscina interior aquecida, campo de ténis e zona comum de churrasco com mesas e bancos. Próximo da praia, restaurantes e comércio, é ideal para uma estadia confortável e prática no Algarve.
                     </p>
                 </div>
             </div>
 
             <aside>
                 <div class="booking-card" data-apartment-id="paraiso-do-sol">
-                    <div class="booking-card__price">
-                        <span class="amount">€95</span>
-                        <span class="per">/ noite</span>
-                    </div>
-
                     <form id="form-reserva" novalidate>
                         <div class="field">
                             <label for="datas-reserva">Datas</label>
@@ -134,6 +162,13 @@
                         </div>
                         <div id="msg-reserva" class="alert" style="margin-top: var(--s-3);"></div>
                     </form>
+
+                    <div class="booking-divider"><span>ou</span></div>
+
+                    <a href="https://www.booking.com/hotel/pt/apartment-starfish-beach.pt-pt.html?aid=304142&label=gen173bo-10CAsouwFCGGFwYXJ0bWVudC1zdGFyZmlzaC1iZWFjaEgzWANouwGIAQGYATO4ARfIAQ_YAQPoAQH4AQGIAgGYAgaoAgG4Ap3Dn9EGwAIB0gIkYjM3MmViMTQtNTMzZC00M2QwLWIwOTUtY2NiMGIwYTkwMDI52AIB4AIB"
+                       target="_blank" rel="noopener" class="btn btn-ghost btn-block">
+                        Reservar via Booking.com
+                    </a>
                 </div>
             </aside>
         </div>
@@ -145,7 +180,7 @@
         <div class="recent-guests" style="border-top: none; padding-top: 0; margin-top: 0;">
             <span class="eyebrow">Quem cá esteve</span>
             <h3 style="margin-top: var(--s-2);">Hóspedes recentes</h3>
-            <p class="sub">Pessoas reais que escolheram o Paraíso do Sol para a sua estadia.</p>
+            <p class="sub">Pessoas reais que escolheram o Paraíso Sol da Rocha para a sua estadia.</p>
             <div class="guests-grid"></div>
         </div>
     </div>
@@ -186,22 +221,43 @@
 
 <script>
     let slideIndex = 0;
-    function atualizarContador() {
-        const slides = document.querySelectorAll('.slide');
+
+    function getGallerySlides() {
+        const gallery = document.querySelector('.detail-gallery');
+        return gallery ? Array.from(gallery.querySelectorAll('.slide')) : [];
+    }
+
+    function mostrarSlide(index) {
+        const slides = getGallerySlides();
         const contador = document.getElementById('fotoContador');
-        if (slides.length > 0 && contador) contador.textContent = `${slideIndex + 1}/${slides.length}`;
+
+        if (!slides.length) {
+            if (contador) contador.textContent = '0/0';
+            return;
+        }
+
+        if (index >= slides.length) slideIndex = 0;
+        else if (index < 0) slideIndex = slides.length - 1;
+        else slideIndex = index;
+
+        slides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === slideIndex);
+        });
+
+        if (contador) contador.textContent = `${slideIndex + 1}/${slides.length}`;
     }
+
+    function atualizarContador() {
+        mostrarSlide(slideIndex);
+    }
+
     function mudarSlide(direcao) {
-        const slides = document.querySelectorAll('.slide');
-        if (slides.length === 0) return;
-        slides[slideIndex].classList.remove('active');
-        slideIndex += direcao;
-        if (slideIndex >= slides.length) slideIndex = 0;
-        if (slideIndex < 0) slideIndex = slides.length - 1;
-        slides[slideIndex].classList.add('active');
-        atualizarContador();
+        mostrarSlide(slideIndex + direcao);
     }
-    document.addEventListener('DOMContentLoaded', atualizarContador);
+
+    document.addEventListener('DOMContentLoaded', () => {
+        mostrarSlide(0);
+    });
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

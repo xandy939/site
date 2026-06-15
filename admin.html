@@ -59,6 +59,72 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- ============ CLIENTES ============ -->
+            <div style="margin-top: var(--s-7);">
+                <div style="margin-bottom: var(--s-4);">
+                    <span class="eyebrow">Base de dados</span>
+                    <h2 class="h-2" style="margin-top: var(--s-2);">Clientes</h2>
+                    <p class="body" style="margin-top: var(--s-2); color: var(--muted); font-size: 14px;">
+                        Pessoas que já fizeram (ou tentaram fazer) reservas no site. Clica em "Ver reservas" para detalhe.
+                    </p>
+                </div>
+
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Telefone</th>
+                                <th>Reservas</th>
+                                <th>Última reserva</th>
+                                <th>Acções</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-clientes">
+                            <tr><td colspan="6" style="text-align:center; color: var(--muted); padding: var(--s-7);">A carregar...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ============ GESTÃO DE PREÇOS POR ÉPOCA ============ -->
+            <div style="margin-top: var(--s-7);">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:var(--s-3); flex-wrap:wrap; margin-bottom: var(--s-4);">
+                    <div>
+                        <span class="eyebrow">Preços</span>
+                        <h2 class="h-2" style="margin-top: var(--s-2);">Épocas e Tarifas</h2>
+                        <p class="body" style="margin-top: var(--s-2); color: var(--muted); font-size: 14px;">
+                            Define o preço por noite para cada período. Datas fora de qualquer época usam o preço base do apartamento.
+                        </p>
+                    </div>
+                    <div style="display:flex; gap: var(--s-2); flex-wrap:wrap;">
+                        <select id="filtro-apt-precos" style="padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line-soft); background: var(--white);">
+                            <option value="litoral-mar">Litoral Mar</option>
+                            <option value="paraiso-do-sol">Paraíso do Sol</option>
+                        </select>
+                        <button class="btn btn-primary btn-sm" id="btn-add-epoca">+ Nova época</button>
+                    </div>
+                </div>
+
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Época</th>
+                                <th>Início</th>
+                                <th>Fim</th>
+                                <th>€ / noite</th>
+                                <th>Acções</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-precos">
+                            <tr><td colspan="5" style="text-align:center; color: var(--muted); padding: var(--s-7);">A carregar...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <div id="zona-bloqueada" class="acesso-bloqueado" style="display:none;">

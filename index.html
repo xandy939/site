@@ -88,6 +88,194 @@
             margin-top: var(--s-4);
             max-width: 560px;
         }
+
+
+        /* Testemunhos Booking.com */
+        .booking-reviews {
+            background: var(--cream, #fbf7ef);
+            border-top: 1px solid var(--line-soft, rgba(16, 33, 63, .10));
+        }
+
+        .booking-reviews__intro {
+            display: grid;
+            grid-template-columns: minmax(260px, 430px) 1fr;
+            gap: clamp(28px, 5vw, 70px);
+            align-items: center;
+            margin-bottom: var(--s-7, 56px);
+        }
+
+        .booking-award-card {
+            background: #ffffff;
+            border: 1px solid var(--line-soft, rgba(16, 33, 63, .10));
+            border-radius: 26px;
+            padding: clamp(22px, 4vw, 34px);
+            box-shadow: 0 20px 60px rgba(14, 23, 41, .08);
+            text-align: center;
+        }
+
+        .booking-award-card img {
+            display: block;
+            width: 100%;
+            max-width: 430px;
+            height: auto;
+            margin: 0 auto;
+        }
+
+        .booking-award-card p {
+            margin: 18px auto 0;
+            max-width: 360px;
+            color: var(--text-muted, #667085);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .booking-reviews__copy .h-2 {
+            margin: var(--s-3, 16px) 0 var(--s-4, 24px);
+        }
+
+        .booking-reviews__summary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 26px;
+        }
+
+        .booking-score-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--navy, #10213f);
+            color: #ffffff;
+            border-radius: 999px;
+            padding: 10px 16px;
+            font-weight: 700;
+            letter-spacing: .01em;
+        }
+
+        .booking-score-pill span {
+            display: inline-grid;
+            place-items: center;
+            min-width: 42px;
+            height: 34px;
+            border-radius: 10px;
+            background: #003b95;
+            color: #ffffff;
+            font-size: 18px;
+        }
+
+        .booking-tag-pill {
+            display: inline-flex;
+            align-items: center;
+            border: 1px solid var(--line-soft, rgba(16, 33, 63, .12));
+            border-radius: 999px;
+            padding: 10px 16px;
+            background: rgba(255,255,255,.70);
+            color: var(--navy, #10213f);
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .booking-reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+        }
+
+        .booking-review-card {
+            position: relative;
+            background: #ffffff;
+            border: 1px solid var(--line-soft, rgba(16, 33, 63, .10));
+            border-radius: 22px;
+            padding: 26px;
+            box-shadow: 0 16px 45px rgba(14, 23, 41, .06);
+            min-height: 230px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .booking-review-card__top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .booking-review-score {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 54px;
+            height: 48px;
+            border-radius: 10px 10px 10px 0;
+            background: #003b95;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 19px;
+        }
+
+        .booking-review-meta {
+            flex: 1;
+        }
+
+        .booking-review-name {
+            display: block;
+            color: var(--navy, #10213f);
+            font-weight: 800;
+            margin-bottom: 3px;
+        }
+
+        .booking-review-date {
+            display: block;
+            color: var(--text-muted, #667085);
+            font-size: 13px;
+        }
+
+        .booking-review-card h3 {
+            font-family: var(--font-serif, Georgia, serif);
+            color: var(--navy, #10213f);
+            font-size: 21px;
+            margin: 0 0 12px;
+        }
+
+        .booking-review-card p {
+            color: var(--text-muted, #667085);
+            line-height: 1.7;
+            font-size: 15px;
+            margin: 0;
+        }
+
+        .booking-review-source {
+            margin-top: auto;
+            padding-top: 18px;
+            color: #003b95;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        @media (max-width: 980px) {
+            .booking-reviews__intro,
+            .booking-reviews-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .booking-reviews__summary {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .booking-score-pill,
+            .booking-tag-pill {
+                justify-content: center;
+            }
+
+            .booking-review-card {
+                padding: 22px;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -131,9 +319,9 @@
             <article class="property-card card">
                 <div class="property-card__media">
                     <span class="property-card__badge">Praia · 300m</span>
-                    <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/664384502.jpg?k=acfd681463efe7d67e77e3f69bff858c863cd120f13f9cf1f756dc146fe1d5e4&o=" alt="Piscina Litoral Mar" class="card-slide active is-logo">
-                    <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/87666305.jpg?k=cfac75c617c54342386963f8d490e120454538ea99436f73d9e6f67cbd13253f&o=" alt="Litoral Mar Interior" class="card-slide is-logo">
-                    <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/87666284.jpg?k=ac35a81f03c927e46e5fd674fdc5d3170bd7f3223ce60e4519c64e595fceb79f&o=" alt="Litoral Mar" class="card-slide is-logo">
+                    <img src="imagens/litoralmar-logo.png" alt="Litoral Mar A.L." class="card-slide active is-logo">
+                    <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/87666284.jpg?k=ac35a81f03c927e46e5fd674fdc5d3170bd7f3223ce60e4519c64e595fceb79f&o=" alt="Litoral Mar — vista" class="card-slide">
+                    <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/87666305.jpg?k=cfac75c617c54342386963f8d490e120454538ea99436f73d9e6f67cbd13253f&o=" alt="Paisagem Litoral Mar" class="card-slide">
                 </div>
                 <div class="property-card__body">
                     <span class="property-card__location">Portimão · Praia da Rocha</span>
@@ -148,7 +336,7 @@
                     </ul>
                     <div class="property-card__footer">
                         <span class="status-pill available">Disponível</span>
-                        <a href="apartamento-rocha.html" class="btn btn-primary btn-sm">Ver Detalhes</a>
+                        <a href="litoralmar.html" class="btn btn-primary btn-sm">Ver Detalhes</a>
                     </div>
                 </div>
             </article>
@@ -157,12 +345,12 @@
                 <div class="property-card__media">
                     <span class="property-card__badge">Praia · 300m</span>
                     <img src="imagens/paraiso-logo.png" alt="Paraíso Sol da Rocha" class="card-slide active is-logo">
-                    <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/146373900.jpg?k=17b1244b20ae1afcff010763b66d635d51930b0d7b2aa3d51b95195fb744d7a0&o=" alt="Sala/cozinha Paraíso do Sol" class="card-slide">
-                    <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/146373879.jpg?k=393350eaf248382c350fd3c91c8cc6c9b0f4672c98ad82d28ae704c72a2eb963&o=" alt="Sala Paraíso do Sol" class="card-slide">
+                    <img src="imagens/paraiso-piscina.jpg" alt="Piscina Paraíso Sol da Rocha" class="card-slide">
+                    <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/100287009.jpg?k=2a33a5825ae58f63983ec00499ea8a21c4d25cc05d2d81c49aeb72242b16c081&o=" alt="Praia da Rocha" class="card-slide">
                 </div>
                 <div class="property-card__body">
                     <span class="property-card__location">Portimão · Praia da Rocha</span>
-                    <h3 class="property-card__title">By TR — Paraíso do Sol</h3>
+                    <h3 class="property-card__title">By TR — Paraíso Sol da Rocha</h3>
                     <ul class="property-card__amenities">
                         <li><span class="ico">⊙</span> 3 piscinas (interior incl.)</li>
                         <li><span class="ico">⊙</span> Estacionamento gratuito</li>
@@ -172,8 +360,8 @@
                           <li><span class="ico">⊙</span> Cozinha equipada</li>
                     </ul>
                     <div class="property-card__footer">
-                        <span class="status-pill coming">Brevemente</span>
-                        <a href="apartamento-amarilis.html" class="btn btn-ghost btn-sm">Ver Detalhes</a>
+                        <span class="status-pill available">Disponível</span>
+                        <a href="paraisosoldarocha.html" class="btn btn-ghost btn-sm">Ver Detalhes</a>
                     </div>
                 </div>
             </article>
@@ -190,7 +378,7 @@
             <div>
                 <div class="feature-icon" style="background: var(--terracotta-soft); color: var(--terracotta);">✦</div>
                 <h3 style="font-family: var(--font-serif); font-size: 18px; color: var(--navy); margin-bottom: 6px;">Sem intermediários</h3>
-                <p class="caption">Pagas directamente ao proprietário. Sem comissões escondidas.</p>
+                <p class="caption">Pague directamente ao proprietário. Sem comissões escondidas.</p>
             </div>
             <div>
                 <div class="feature-icon" style="background: var(--atlantic-soft); color: var(--atlantic);">⊛</div>
@@ -206,6 +394,111 @@
     </div>
 </section>
 
+
+
+<section class="section-tight booking-reviews" id="testemunhos-booking">
+    <div class="container">
+        <div class="booking-reviews__intro">
+            <div class="booking-award-card">
+                <img src="imagens/booking-award-2026.png" alt="Booking.com Traveller Review Awards 2026" loading="lazy">
+                <p>Reconhecimento Booking.com Traveller Review Awards 2026, atribuído com base nas avaliações dos hóspedes.</p>
+            </div>
+
+            <div class="booking-reviews__copy">
+                <span class="eyebrow">Testemunhos Booking.com</span>
+                <h2 class="h-2">Avaliações reais de quem já ficou connosco</h2>
+                <p class="body-lg" style="color: var(--text-muted); max-width: 680px;">
+                    A opinião dos nossos hóspedes reflete aquilo que valorizamos em cada estadia: localização, conforto, limpeza e acompanhamento próximo desde a reserva até ao check-out.
+                </p>
+                <div class="booking-reviews__summary" aria-label="Resumo das avaliações apresentadas">
+                    <div class="booking-score-pill"><span>8,3</span> média apresentada em 41 comentários</div>
+                    <div class="booking-tag-pill">Localização · Limpeza · Conforto</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="booking-reviews-grid">
+            <article class="booking-review-card">
+                <div class="booking-review-card__top">
+                    <div class="booking-review-score">10</div>
+                    <div class="booking-review-meta">
+                        <span class="booking-review-name">Jose, JE</span>
+                        <span class="booking-review-date">4 de abril de 2026</span>
+                    </div>
+                </div>
+                <h3>Estou muito feliz por poder voltar.</h3>
+                <p>“Tudo.”</p>
+                <div class="booking-review-source">Booking.com</div>
+            </article>
+
+            <article class="booking-review-card">
+                <div class="booking-review-card__top">
+                    <div class="booking-review-score">9,0</div>
+                    <div class="booking-review-meta">
+                        <span class="booking-review-name">Mihajlo, DE</span>
+                        <span class="booking-review-date">13 de março de 2026</span>
+                    </div>
+                </div>
+                <h3>Super</h3>
+                <p>“Proximidade da praia, tamanho. Ótimo anfitrião.”</p>
+                <div class="booking-review-source">Booking.com</div>
+            </article>
+
+            <article class="booking-review-card">
+                <div class="booking-review-card__top">
+                    <div class="booking-review-score">10</div>
+                    <div class="booking-review-meta">
+                        <span class="booking-review-name">Nerea, ES</span>
+                        <span class="booking-review-date">11 de novembro de 2025</span>
+                    </div>
+                </div>
+                <h3>Excelente</h3>
+                <p>“Excelente atendimento por parte dos anfitriões.”</p>
+                <div class="booking-review-source">Booking.com</div>
+            </article>
+
+            <article class="booking-review-card">
+                <div class="booking-review-card__top">
+                    <div class="booking-review-score">10</div>
+                    <div class="booking-review-meta">
+                        <span class="booking-review-name">Sónia, PT</span>
+                        <span class="booking-review-date">12 de agosto de 2025</span>
+                    </div>
+                </div>
+                <h3>Casa e piscina</h3>
+                <p>“Da casa e de ter acesso à piscina.”</p>
+                <div class="booking-review-source">Booking.com</div>
+            </article>
+
+            <article class="booking-review-card">
+                <div class="booking-review-card__top">
+                    <div class="booking-review-score">10</div>
+                    <div class="booking-review-meta">
+                        <span class="booking-review-name">Nuno, PT</span>
+                        <span class="booking-review-date">21 de junho de 2025</span>
+                    </div>
+                </div>
+                <h3>Fantástica!</h3>
+                <p>Uma avaliação simples e direta que reforça a qualidade da experiência.</p>
+                <div class="booking-review-source">Booking.com</div>
+            </article>
+
+            <article class="booking-review-card">
+                <div class="booking-review-card__top">
+                    <div class="booking-review-score">10</div>
+                    <div class="booking-review-meta">
+                        <span class="booking-review-name">Jackson, BR</span>
+                        <span class="booking-review-date">12 de junho de 2025</span>
+                    </div>
+                </div>
+                <h3>Excelente avaliação</h3>
+                <p>Nota máxima nas categorias de funcionários, limpeza, localização, comodidades, conforto e relação preço-qualidade.</p>
+                <div class="booking-review-source">Booking.com</div>
+            </article>
+        </div>
+    </div>
+</section>
+
 <footer class="site-footer">
     <div class="container">
         <div class="footer-col">
@@ -215,7 +508,7 @@
         <div class="footer-col">
             <h4>Contacto</h4>
             <p>
-                <a href="mailto:apt.turisticos.algarve@tudopararegistar.pt">apt.turisticos.algarve@tudopararegistar.pt</a><br>
+                <a href="mailto:reservas@apartamentosturisticosalgarve.pt">reservas@apartamentosturisticosalgarve.pt</a><br>
                 <a href="tel:+351218200221">+351 218 200 221</a>
             </p>
         </div>
@@ -225,6 +518,12 @@
         </div>
     </div>
     <div class="footer-divider"></div>
+    <div style="display:flex; align-items:center; justify-content:center; gap:20px; flex-wrap:wrap; padding: var(--s-4) var(--s-4) 0;">
+        <img src="imagens/grupo-tpr-logo.png" alt="Grupo TudoParaRegistar, Lda" style="height:90px; width:auto;">
+        <div style="font-size:12.5px; color:var(--muted); line-height:1.5; max-width:340px; text-align:left;">
+            <strong style="color:var(--cream); font-weight:600;">By TR Alojamentos</strong> faz parte do <strong style="color:var(--cream); font-weight:600;">Grupo TudoParaRegistar, Lda</strong> — Software · Hardware · Car Imports · Holiday Rentals.
+        </div>
+    </div>
     <div class="footer-copy">© 2026 By TR Alojamentos · Apartamentos Turísticos Algarve · Todos os direitos reservados</div>
 </footer>
 

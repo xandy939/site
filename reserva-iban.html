@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>By TR Alojamentos · Transferência Bancária</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .mb-card {
+            background: var(--white);
+            border: 1px solid var(--line-soft);
+            border-radius: var(--radius-lg);
+            padding: var(--s-7) var(--s-6);
+            max-width: 620px;
+            width: 100%;
+            box-shadow: var(--sh-2);
+        }
+        .mb-icon {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            background: var(--warn-bg);
+            color: var(--warn);
+            margin: 0 auto var(--s-4);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: 600;
+        }
+        .mb-ref-box {
+            background: var(--cream);
+            border: 2px dashed var(--gold);
+            border-radius: var(--radius);
+            padding: var(--s-5);
+            margin: var(--s-5) 0;
+            text-align: left;
+        }
+        .mb-ref-box .row { margin-bottom: var(--s-3); }
+        .mb-ref-box .row:last-child { margin-bottom: 0; }
+        .mb-ref-box .label {
+            font-size: 11px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .mb-ref-box .value {
+            font-family: var(--font-serif);
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--navy);
+        }
+        .mb-ref-box .value-mono {
+            font-family: 'Courier New', monospace;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--navy);
+            letter-spacing: 0.05em;
+            word-break: break-all;
+        }
+        .mb-ref-box .value-big {
+            font-family: var(--font-serif);
+            font-size: 30px;
+            font-weight: 700;
+            color: var(--navy);
+        }
+        .instrucoes {
+            background: #f0f7ff;
+            border-left: 4px solid var(--atlantic);
+            padding: var(--s-4);
+            border-radius: var(--radius);
+            margin-bottom: var(--s-4);
+            font-size: 14px;
+            line-height: 1.6;
+            text-align: left;
+        }
+        .instrucoes strong { color: var(--navy); }
+        .aviso-ref {
+            background: var(--warn-bg);
+            border: 1px solid var(--gold);
+            color: #5d4d00;
+            padding: var(--s-4);
+            border-radius: var(--radius);
+            margin: var(--s-4) 0;
+            font-size: 14px;
+            line-height: 1.6;
+            text-align: left;
+        }
+        .aviso-ref code {
+            background: #fff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            color: var(--navy);
+        }
+        .btn-copy {
+            background: var(--navy);
+            color: #fff;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        .btn-copy:hover { background: var(--ink-soft); }
+    </style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="site-header__inner">
+        <a href="index.html" class="brand">
+            Alojamentos Algarve<small>By TR</small>
+        </a>
+    </div>
+</header>
+
+<div class="auth-wrap">
+    <div class="mb-card" style="text-align: center;">
+        <div class="mb-icon">€</div>
+        <h1 style="font-family: var(--font-serif); font-size: 30px; color: var(--navy); margin-bottom: var(--s-3);">
+            Reserva pré-confirmada
+        </h1>
+        <p style="color: var(--muted); margin-bottom: var(--s-4);">
+            Faz uma transferência bancária com os dados abaixo. Quando recebermos o dinheiro, confirmamos a reserva e enviamos email.
+        </p>
+
+        <div id="iban-detalhes" class="mb-ref-box">
+            <p style="color: var(--muted); text-align:center;">A carregar dados...</p>
+        </div>
+
+        <div id="aviso-ref" class="aviso-ref" style="display:none;">
+            <strong>⚠ Importante:</strong> põe a referência <code id="codigo-ref"></code> na descrição da transferência. Sem isto, não conseguimos associar o pagamento à tua reserva.
+            <button class="btn-copy" onclick="copiarRef()">Copiar referência</button>
+        </div>
+
+        <div class="instrucoes">
+            <strong>Como fazer a transferência:</strong>
+            <ol style="margin: var(--s-2) 0 0 var(--s-4); padding: 0;">
+                <li>Acede ao homebanking ou app do teu banco</li>
+                <li>Escolhe "Transferência" → "Para outro banco/IBAN"</li>
+                <li>Cola o <strong>IBAN</strong>, indica o <strong>valor exacto</strong></li>
+                <li>Na descrição/comunicação, escreve a <strong>referência</strong> que recebeste</li>
+                <li>Confirma a transferência</li>
+            </ol>
+        </div>
+
+        <p style="font-size: 12.5px; color: var(--muted); margin-bottom: var(--s-4);">
+            Confirmação da reserva: 1-2 dias úteis após recebermos a transferência. Se quiseres acelerar, envia o comprovativo para
+            <a href="mailto:apt.turisticos.algarve@tudopararegistar.pt" style="color: var(--navy);">apt.turisticos.algarve@tudopararegistar.pt</a>.
+        </p>
+
+        <a href="index.html" class="btn btn-ghost btn-lg" style="margin-top: var(--s-3);">Voltar à página inicial</a>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <div class="container">
+        <div class="footer-col">
+            <h4>By TR Alojamentos</h4>
+            <p>Apartamentos turísticos em Praia da Rocha, Portimão.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Contacto</h4>
+            <p><a href="mailto:apt.turisticos.algarve@tudopararegistar.pt">apt.turisticos.algarve@tudopararegistar.pt</a></p>
+        </div>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-copy">© 2026 By TR Alojamentos · Todos os direitos reservados</div>
+</footer>
+
+<script>
+(() => {
+    const p = new URLSearchParams(location.search);
+    const iban    = p.get("iban");
+    const titular = p.get("titular");
+    const banco   = p.get("banco");
+    const valor   = p.get("valor");
+    const ref     = p.get("ref");
+
+    const el = document.getElementById("iban-detalhes");
+    if (!iban || !valor || !ref) {
+        el.innerHTML = '<p style="color:#c5221f; text-align:center;">Faltam dados — voltar e tentar novamente.</p>';
+        return;
+    }
+
+    el.innerHTML = `
+        ${titular ? `
+        <div class="row">
+            <div class="label">Titular</div>
+            <div class="value">${esc(titular)}</div>
+        </div>` : ""}
+        ${banco ? `
+        <div class="row">
+            <div class="label">Banco</div>
+            <div class="value">${esc(banco)}</div>
+        </div>` : ""}
+        <div class="row">
+            <div class="label">IBAN</div>
+            <div class="value-mono">${esc(iban)}</div>
+        </div>
+        <div class="row">
+            <div class="label">Valor a transferir</div>
+            <div class="value-big">€ ${esc(valor)}</div>
+        </div>
+        <div class="row">
+            <div class="label">Referência (descrição da transferência)</div>
+            <div class="value-mono">${esc(ref)}</div>
+        </div>
+    `;
+
+    document.getElementById("aviso-ref").style.display = "block";
+    document.getElementById("codigo-ref").textContent = ref;
+
+    window.copiarRef = () => {
+        navigator.clipboard.writeText(ref).then(() => {
+            const btn = document.querySelector(".btn-copy");
+            const original = btn.textContent;
+            btn.textContent = "✓ Copiado";
+            setTimeout(() => { btn.textContent = original; }, 2000);
+        });
+    };
+
+    function esc(s) {
+        return (s ?? "").toString()
+            .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+    }
+})();
+</script>
+</body>
+</html>

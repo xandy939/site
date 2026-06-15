@@ -26,7 +26,7 @@ async function sql(q) {
 }
 
 console.log("\n=== HTML pages ===");
-const pages = ["index.html","login.html","registar.html","perfil.html","admin.html","apartamento-rocha.html","apartamento-amarilis.html","reserva-confirmada.html","reserva-cancelada.html"];
+const pages = ["index.html","login.html","registar.html","perfil.html","admin.html","litoralmar.html","paraisosoldarocha.html","reserva-multibanco.html"];
 for (const p of pages) {
     log(fs.existsSync(p) ? "pass" : "fail", "pages", p);
 }
@@ -66,7 +66,7 @@ for (const k of ["owner_email","edge_url","service_key"])
 
 console.log("\n=== Edge Functions ===");
 const fns = await fetch(`${BASE_API}/functions`, { headers: { Authorization: `Bearer ${token}` } }).then(x => x.json());
-const expectedFns = { "notify-owner": true, "ical-export": false, "ical-import": true, "create-checkout": false, "stripe-webhook": false };
+const expectedFns = { "notify-owner": true, "ical-export": false, "ical-import": true, "gerar-referencia-mb": false, "ifthenpay-callback": false };
 for (const slug of Object.keys(expectedFns)) {
     const fn = fns.find(f => f.slug === slug);
     if (!fn) { log("fail", "edge-fn", `${slug} NOT DEPLOYED`); continue; }
@@ -81,26 +81,36 @@ let body = await resp.text();
 log(resp.status === 200 && body.startsWith("BEGIN:VCALENDAR") ? "pass" : "fail", "invoke",
     `ical-export → ${resp.status}`);
 
-// create-checkout POST
-resp = await fetch(`${FN_BASE}/create-checkout`, {
+// gerar-referencia-mb POST
+resp = await fetch(`${FN_BASE}/gerar-referencia-mb`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Origin: "http://localhost:5500" },
     body: JSON.stringify({ apartment_id: "litoral-mar", check_in: "2028-02-10", check_out: "2028-02-13", guests: 1, guest_name: "HealthCheck", guest_email: "health@test.local" }),
 });
 let data = await resp.json();
-if (resp.status === 200 && data.checkout_url?.startsWith("https://checkout.stripe.com/")) {
-    log("pass", "invoke", `create-checkout → Stripe (€${(data.amount_cents / 100).toFixed(2)}, ${data.nights} noites)`);
+if (resp.status === 200 && data.referencia) {
+    log("pass", "invoke", `gerar-referencia-mb → Multibanco ${data.entidade}/${data.referencia} (€${data.valor_eur})`);
+    await sql(`delete from reservations where guest_email = 'health@test.local';`);
 } else {
-    log("fail", "invoke", `create-checkout → ${resp.status} ${JSON.stringify(data)}`);
+    log("fail", "invoke", `gerar-referencia-mb → ${resp.status} ${JSON.stringify(data)}`);
 }
 
 // CORS preflight
-resp = await fetch(`${FN_BASE}/create-checkout`, {
+resp = await fetch(`${FN_BASE}/gerar-referencia-mb`, {
     method: "OPTIONS",
     headers: { Origin: "http://localhost:5500", "Access-Control-Request-Method": "POST", "Access-Control-Request-Headers": "content-type" },
 });
 log(resp.status === 204 && resp.headers.get("access-control-allow-origin") ? "pass" : "fail", "invoke",
-    `CORS preflight create-checkout → ${resp.status}`);
+    `CORS preflight gerar-referencia-mb → ${resp.status}`);
+
+// ifthenpay-callback (com chave correcta deve aceitar; com errada deve dar 401)
+const apk = "2148-3807-6332-9589";
+resp = await fetch(`${FN_BASE}/ifthenpay-callback?key=${apk}&entity=999&reference=000000000`);
+log(resp.status === 404 ? "pass" : "fail", "invoke",
+    `ifthenpay-callback key correcta + ref fake → ${resp.status} (esperado 404 reservation_not_found)`);
+resp = await fetch(`${FN_BASE}/ifthenpay-callback?key=chave-errada&entity=999&reference=000000000`);
+log(resp.status === 401 ? "pass" : "fail", "invoke",
+    `ifthenpay-callback key errada → ${resp.status} (esperado 401)`);
 
 // notify-owner without Gmail creds
 const serviceKey = fs.readFileSync(".supabase-service-key", "utf8").trim();

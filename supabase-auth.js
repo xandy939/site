@@ -41,6 +41,33 @@ function bindLogin(sb) {
             alert("Erro crítico de ligação ao servidor Supabase.");
         }
     });
+
+    // ---- ESQUECI-ME DA PASSWORD ---------------------------------------
+    const linkEsqueci = document.getElementById("link-esqueci");
+    if (linkEsqueci) {
+        linkEsqueci.addEventListener("click", async (e) => {
+            e.preventDefault();
+            const inputEmail = document.getElementById("email");
+            const email = (inputEmail?.value || "").trim();
+            if (!email) {
+                inputEmail?.focus();
+                return alert("Escreve o teu email no campo acima e depois carrega em 'Esqueceu-se?'.");
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                return alert("Email inválido. Verifica e tenta de novo.");
+            }
+            try {
+                const { error } = await sb.auth.resetPasswordForEmail(email, {
+                    redirectTo: location.origin + "/redefinir-pass.html",
+                });
+                if (error) return alert("Erro: " + error.message);
+                alert("Email de recuperação enviado para " + email + ".\n\nVerifica a inbox (e a pasta de SPAM). Pode demorar até 1 minuto.");
+            } catch (err) {
+                console.error(err);
+                alert("Erro de ligação. Tenta de novo.");
+            }
+        });
+    }
 }
 
 // ---- REGISTO ---------------------------------------------------------------

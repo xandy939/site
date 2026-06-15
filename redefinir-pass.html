@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>By TR Alojamentos · Definir nova palavra-passe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="site-header__inner">
+        <a href="index.html" class="brand">
+            Alojamentos Algarve<small>By TR</small>
+        </a>
+    </div>
+</header>
+
+<div class="auth-wrap">
+    <div class="caixa-login" style="max-width:440px;">
+        <h2 style="font-family: var(--font-serif); font-size: 26px; color: var(--navy); text-align:center; margin-bottom: var(--s-2);">Nova palavra-passe</h2>
+        <p style="color: var(--muted); text-align:center; margin-bottom: var(--s-5); font-size: 14px;">Define a tua nova palavra-passe para entrares na conta By TR Alojamentos.</p>
+
+        <div id="msg-status" style="display:none; padding:12px 14px; border-radius:8px; margin-bottom:var(--s-3); font-size:13.5px;"></div>
+
+        <form id="form-pass">
+            <div class="field">
+                <label for="nova">Nova palavra-passe</label>
+                <input type="password" id="nova" placeholder="Mínimo 6 caracteres" minlength="6" required autofocus>
+            </div>
+            <div class="field">
+                <label for="confirmar">Confirmar palavra-passe</label>
+                <input type="password" id="confirmar" placeholder="Repete a mesma" minlength="6" required>
+            </div>
+
+            <button type="submit" id="btn-submit" class="btn btn-primary btn-block btn-lg" style="margin-top: var(--s-4);">Guardar nova palavra-passe</button>
+        </form>
+
+        <p style="text-align:center; margin-top: var(--s-4); font-size: 12.5px; color: var(--muted);">
+            <a href="login.html" style="color: var(--navy);">← Voltar ao login</a>
+        </p>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <div class="container">
+        <div class="footer-col">
+            <h4>By TR Alojamentos</h4>
+            <p>Apartamentos turísticos em Praia da Rocha, Portimão.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Contacto</h4>
+            <p><a href="mailto:reservas@apartamentosturisticosalgarve.pt">reservas@apartamentosturisticosalgarve.pt</a></p>
+        </div>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-copy">© 2026 By TR Alojamentos · Todos os direitos reservados</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(() => {
+    const SUPABASE_URL = "https://mfrmkkdqmlfuswggqbra.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1mcm1ra2RxbWxmdXN3Z2dxYnJhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNjM5NDYsImV4cCI6MjA5NDgzOTk0Nn0.T-niRyVa8D8RjXOgKqENbwNoVQFJ95cpfaH--LyfrOE";
+
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const msg = document.getElementById("msg-status");
+    const form = document.getElementById("form-pass");
+    const btn = document.getElementById("btn-submit");
+
+    function showMsg(tipo, texto) {
+        msg.style.display = "block";
+        msg.style.background = tipo === "ok" ? "#e6f4ea" : "#fdecea";
+        msg.style.color = tipo === "ok" ? "#137333" : "#a50e0e";
+        msg.style.border = "1px solid " + (tipo === "ok" ? "#bbe5c5" : "#f5c2bf");
+        msg.textContent = texto;
+    }
+
+    window.addEventListener("load", async () => {
+        // Supabase apanha o token do hash automaticamente
+        const { data: { session } } = await sb.auth.getSession();
+        if (!session) {
+            showMsg("erro", "Sessão inválida ou expirada. Pede um novo link de recuperação.");
+            form.style.display = "none";
+        }
+    });
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const nova = document.getElementById("nova").value;
+        const conf = document.getElementById("confirmar").value;
+        if (nova.length < 6) return showMsg("erro", "A palavra-passe tem de ter pelo menos 6 caracteres.");
+        if (nova !== conf)   return showMsg("erro", "As palavras-passe não coincidem.");
+
+        btn.disabled = true;
+        btn.textContent = "A guardar...";
+
+        const { error } = await sb.auth.updateUser({ password: nova });
+        if (error) {
+            showMsg("erro", "Erro: " + error.message);
+            btn.disabled = false;
+            btn.textContent = "Guardar nova palavra-passe";
+            return;
+        }
+        showMsg("ok", "Palavra-passe alterada com sucesso! A redireccionar para o login...");
+        await sb.auth.signOut();
+        setTimeout(() => location.href = "login.html", 2000);
+    });
+})();
+</script>
+</body>
+</html>
